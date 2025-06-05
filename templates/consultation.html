@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloom - Book a Consultation</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/consultation.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="logo-container">
+            <img src="Images/logo.png" alt="Bloom Logo" class="logo-img">
+            <div class="logo-text">
+                <h1>Bloom</h1>
+                <p class="tagline">From Crampy to Happy, We've Got You Covered</p>
+            </div>
+        </div>
+        
+        <nav class="main-nav">
+            <ul>
+                <li><a href="Home.html"><i class="fas fa-info-circle"></i> About Us</a></li>
+                <li><a href="loginPag.html"><i class="fas fa-user-circle"></i> Login / Sign Up</a></li>
+            </ul>
+        </nav>
+        
+        <div class="profile-icon">
+            <i class="fas fa-user-circle"></i>
+        </div>
+    </header>    <main class="consultation-main">
+        <aside class="consultation-sidebar">
+            <h3><i class="fas fa-spa"></i> Bloom</h3>
+            <ul class="topics-list">
+                <li data-category="all" class="active"><i class="fas fa-star"></i> All Specialists</li>
+                <li data-category="gynecologist"><i class="fas fa-female"></i> Gynecologists</li>
+                <li data-category="nutritionist"><i class="fas fa-utensils"></i> Nutritionists</li>                
+                <li data-category="support"><i class="fas fa-heart"></i> Therapists</li>
+                <li data-category="ayurveda"><i class="fas fa-leaf"></i> Ayurveda Experts</li>
+                <li data-category="fitness"><i class="fas fa-dumbbell"></i> Fitness Coaches</li>
+            </ul>
+        </aside>
+
+        <section class="consultation-content">
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="doctorSearch" placeholder="Search for specialists...">
+                    <button id="searchBtn">Search</button>
+                </div>                <div class="filter-tags">
+                    <span class="filter-tag active" data-filter="all">All</span>
+                    <span class="filter-tag" data-filter="available">Available Today</span>
+                    <span class="filter-tag" data-filter="female">Female Doctors</span>
+                    <span class="filter-tag" data-filter="appointments">Your Appointments</span>
+                    <span class="filter-tag" data-filter="contacted">Contacted Doctors</span>
+                </div>
+            </div>            <div class="professionals-grid" id="professionalsContainer">
+                <!-- All specialists will be dynamically loaded here by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Consultation Modal -->
+        <div class="consultation-modal" id="consultationModal">
+            <div class="modal-overlay" id="modalOverlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2><i class="fas fa-calendar-check"></i> Book a Consultation</h2>
+                    <button class="close-modal" id="closeModal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="consultationForm">
+                        <div class="form-group">
+                            <label for="doctorName"><i class="fas fa-user-md"></i> Specialist</label>
+                            <input type="text" id="doctorName" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="userName"><i class="fas fa-user"></i> Your Name</label>
+                            <input type="text" id="userName" placeholder="Enter your full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="userEmail"><i class="fas fa-envelope"></i> Your Email</label>
+                            <input type="email" id="userEmail" placeholder="Enter your email address" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="appointmentDate"><i class="fas fa-calendar-day"></i> Preferred Date</label>
+                            <input type="date" id="appointmentDate" required min="">
+                        </div>
+                        <div class="form-group">
+                            <label for="consultationType"><i class="fas fa-video"></i> Consultation Type</label>
+                            <select id="consultationType" required>
+                                <option value="">Select type</option>
+                                <option value="video">Video Call</option>
+                                <option value="clinic">Clinic Visit</option>
+                                <option value="phone">Phone Call</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="userMessage"><i class="fas fa-comment-dots"></i> Additional Notes</label>
+                            <textarea id="userMessage" rows="4" placeholder="Mention any specific concerns or symptoms"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="submit-consultation">
+                                <i class="fas fa-paper-plane"></i> Book Consultation
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirmation Toast -->
+        <div class="confirmation-toast" id="confirmationToast">
+            <div class="toast-content">
+                <i class="fas fa-check-circle"></i>
+                <span>Your consultation has been booked successfully!</span>
+            </div>
+        </div>
+
+        <!-- Message Modal -->
+        <div class="message-modal" id="messageModal">
+            <div class="modal-overlay" id="messageModalOverlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2><i class="fas fa-envelope"></i> Messages</h2>
+                    <button class="close-modal" id="closeMessageModal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="message-container" id="messageContainer">
+                        <!-- Messages will be loaded here -->
+                    </div>
+                    <div class="premium-message" id="premiumMessage" style="display: none;">
+                        <div class="premium-content">
+                            <i class="fas fa-crown"></i>
+                            <h3>Upgrade to Premium</h3>
+                            <p>You've reached the free message limit. Upgrade to our premium plan to continue messaging.</p>
+                            <button class="upgrade-btn">Upgrade Now</button>
+                        </div>
+                    </div>
+                    <form id="messageForm" class="message-form">
+                        <div class="form-group">
+                            <textarea id="messageText" placeholder="Type your message..." required></textarea>
+                            <button type="submit" class="send-message-btn">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>    
+    <script src="{{ url_for('static', filename='css/consultation.js') }}"></script>
+</body>
+</html> 

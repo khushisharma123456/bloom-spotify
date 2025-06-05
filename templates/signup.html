@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloom - Sign Up</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/loginPg.css') }}">
+</head>
+<body>
+    <div class="header">
+        <a href="#" class="logo">
+            <img src="{{ url_for('static', filename='Images/logo1.png') }}" alt="Bloom Logo" width="40" height="40">
+            <span class="logo-text">Bloom</span>
+            <span class="tagline">From Crampy to Happy, We've Got You Covered.</span>
+        </a>
+        <div class="nav">
+            <a href="/">Home</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="auth-container">
+            <div class="auth-image">
+                <div class="auth-image-content">
+                    <h2>Join Bloom</h2>
+                    <p>Sign up to access personalized wellness tracking, expert advice, and a supportive community.</p>
+                    <img src="{{ url_for('static', filename='Images/logo1.png') }}" alt="Bloom Logo" width="80" height="80">
+                </div>
+            </div>
+
+            <div class="auth-forms">
+                <h2>Create an Account</h2>
+                <form class="auth-form" action="{{ url_for('signup') }}" method="POST">
+                    <input type="hidden" name="is_new_signup" value="true">
+                    <div class="form-group">
+                        <label for="fullname">Full Name</label>
+                        <input type="text" id="fullname" name="full_name" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" name="email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" name="password" placeholder="Create a password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password">Confirm Password</label>
+                        <input type="password" id="confirm-password" name="confirm_password" placeholder="Confirm your password" required>
+                    </div>
+                    <button type="submit" class="submit-btn">Create Account</button>
+                </form>
+
+                <div class="auth-divider">
+                    <span>Or continue with</span>
+                </div>
+
+                <div class="social-login">
+                    <button class="social-btn">
+                        <img src="{{ url_for('static', filename='Images/google-icon.png') }}" width="24" height="24" alt="Google">
+                        Continue with Google
+                    </button>
+                </div>
+
+                <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for Password Confirmation -->
+    <script>
+        document.querySelector("form").addEventListener("submit", function (e) {
+            const password = document.getElementById("signup-password").value;
+            const confirmPassword = document.getElementById("confirm-password").value;
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                alert("Passwords do not match!");
+            }
+        });
+    </script>
+</body>
+</html>

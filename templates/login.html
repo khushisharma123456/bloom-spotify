@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloom - Login</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/loginPg.css') }}">
+</head>
+<body>
+    <div class="header">
+        <a href="#" class="logo">
+            <img src="{{ url_for('static', filename='Images/logo1.png') }}" alt="Bloom Logo" width="40" height="40">
+            <span class="logo-text">Bloom</span>
+            <span class="tagline">From Crampy to Happy, We've Got You Covered.</span>
+        </a>
+        <div class="nav">
+            <a href="/">Home</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="auth-container">
+            <div class="auth-image">
+                <div class="auth-image-content">
+                    <h2>Welcome Back!</h2>
+                    <p>Log in to continue your journey with Bloom.</p>
+                    <img src="{{ url_for('static', filename='Images/logo1.png') }}" alt="Bloom Logo" width="80" height="80">
+                </div>
+            </div>
+
+            <div class="auth-forms">
+                <h2>Login</h2>
+                <form class="auth-form" action="/login" method="POST">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    </div>
+                    <a href="#" class="forgot-password">Forgot password?</a>
+                    <button type="submit" class="submit-btn">Login</button>
+                </form>
+
+                <div class="auth-divider">
+                    <span>Or continue with</span>
+                </div>
+
+                <div class="social-login">
+                    <button class="social-btn">
+                        <img src="{{ url_for('static', filename='Images/google-icon.png') }}" width="24" height="24" alt="Google">
+                        Continue with Google
+                    </button>
+                </div>
+
+                <p>Don't have an account? <a href="{{ url_for('signup') }}">Sign Up</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

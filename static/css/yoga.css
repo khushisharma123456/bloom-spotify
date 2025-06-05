@@ -1,0 +1,368 @@
+/* Reset & Basic Styling */
+body {
+    font-family: 'Arial', sans-serif;
+    background: url('../Images/Background.png') no-repeat center center fixed; 
+    background-size: cover;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 40px; /* Reduce padding */
+    background-color: #8B4E7D;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    height: 60px; /* Reduce header height */
+}
+
+.home {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    position: relative;
+    top: -2px; /* Minor adjustment */
+}
+
+.left-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.profile {
+    width: 35px; /* Increase profile image size */
+    height: 35px;
+}
+
+
+
+.logo {
+    display: flex;
+    align-items: center;
+    color: white;
+}
+
+.logo h1 {
+    font-size: 32px;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.logo span {
+    font-size: 14px;
+    max-width: 220px;
+    display: block;
+    line-height: 1.2;
+}
+
+.nav-links {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.profile-icon {
+    background-color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* Main Content */
+.container {
+    display: flex;
+    justify-content: space-between; /* Positions lessons on left, calories on right */
+    align-items: stretch;
+    gap: 100px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Adjust Card Styling */
+.card {
+    background-color: #8c527b;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    flex: 1;
+}
+
+/* Lessons Section */
+.lessons-section {
+    width: 500px; /* More space for lessons */
+}
+
+/* Calories Section */
+.calories-section {
+    width: 40%;
+    background: linear-gradient(to right, #ff4b5c, #ff758c);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    position: relative;
+    padding-bottom: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center everything */
+}
+
+/* Lessons Grid */
+.lesson-grid {
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+}
+
+/* Lesson Items */
+.lesson {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    width: 30%;
+    left: 100px;
+}
+
+.lesson img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.calories-info {
+    margin-bottom: 15px;
+    text-align: left;
+    
+}
+
+/* Button Styling */
+.track-btn {
+    background-color: white;
+    color: #ff4b5c;
+    border: none;
+    padding: 10px 15px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.track-btn:hover {
+    background-color: #ff4b5c;
+    color: white;
+    border: 2px solid white;
+}
+
+.fitness-image {
+    position: absolute;
+    bottom: 0; /* Moves image to bottom */
+    right: 10px; /* Adjust position if needed */
+    max-width: 300px;
+    height: auto;
+}
+
+.calories-section img {
+    display: block;
+    margin: 20px auto 0; /* Centers image and adds space */
+    width: 120px; /* Adjust size as needed */
+    position: relative;
+    top: 10px; /* Adjust this to move image down */
+}
+
+.calories-stats {
+    background: rgba(255, 255, 255, 0.8); /* Slight transparency to blend with the background */
+    padding: 20px;
+    border-radius: 10px;
+    width: 100%; /* Ensures full width */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Adds depth */
+    position: relative;
+}
+
+/* Stats Grid - Spread Out */
+.stats {
+    display: flex;
+    justify-content: space-between; /* Spreads items evenly */
+    gap: 20px;
+    margin-top: 10px;
+    width: 100%;
+    max-width: 100%; /* Ensures it takes full container width */
+    margin-bottom: 20px; 
+}
+
+/* Individual Stat Blocks */
+.stat {
+    flex: 1; /* Makes all stat blocks equal in size */
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    background: #ff4b5c; /* Use a solid color for visibility */
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 100px;
+    min-width: 100px;
+}
+
+/* Text Inside Each Stat */
+.stat-value {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.stat-label {
+    font-size: 14px;
+    opacity: 0.9;
+    color: #fff;
+}
+.stats-img {
+    width: 100%;
+    position: relative;
+    left: 0;
+    bottom: 0px; /* Adjust to slightly overlap */
+}
+.calories-stats img {
+    width: 100%;  /* Make it cover full width */
+    height: auto; /* Maintain aspect ratio */
+    display: block;
+    margin-top: 20px;
+    border-radius: 10px;
+    align-items: center;
+    max-width: 500px;
+
+}
+.calories-stats h3{
+    color: black;
+}
+.calories-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    gap: 20px;
+}
+
+
+.calories-image img{
+    width: 250px; /* Adjust image size */
+    height: 150px;
+}
+.cta-section {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #993add;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.cta-button:hover {
+    background-color: #7b30ca;
+}
+
+.testimonial p {
+    text-align: center;
+    font-style: italic;
+    margin-top: 15px;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+
+
+/* Responsive Design */
+@media (max-width: 900px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .lessons-section, .calories-section {
+        width: 90%;
+    }
+
+    .lesson-grid {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .lesson {
+        width: 45%;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.exercise-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.exercise-box {
+    background-color: white;
+    border-radius: 10px;
+    padding: 15px;
+    width: 500px;
+    text-align: left;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    font-weight: bold;
+    color:black;
+}
+
+
+
+

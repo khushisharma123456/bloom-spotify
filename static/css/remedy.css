@@ -1,0 +1,150 @@
+/* remedy.css - Beautiful Remedy Detail Page */
+body, html {
+  background: #FAF6F1;
+  color: #3d2c29;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+.remedy-detail-container {
+  max-width: 700px;
+  margin: 2.5rem auto;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(140, 82, 123, 0.10);
+  padding: 2.5rem 2rem 2rem 2rem;
+  position: relative;
+}
+
+.back-btn {
+  background: #8B4E7D;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.3rem;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  transition: background 0.2s;
+}
+.back-btn:hover {
+  background: #57304e;
+}
+
+.remedy-header {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+
+.remedy-image {
+  width: 220px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(140, 82, 123, 0.08);
+  background: #f8f0f5;
+}
+
+.remedy-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.remedy-meta h1 {
+  font-size: 2rem;
+  color: #8B4E7D;
+  margin: 0 0 0.3rem 0;
+}
+.remedy-badge {
+  background: #f3e1f0;
+  color: #8B4E7D;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border-radius: 16px;
+  padding: 4px 14px;
+  display: inline-block;
+  margin-bottom: 0.2rem;
+}
+.remedy-time, .remedy-calories {
+  font-size: 1rem;
+  color: #57304e;
+  margin-bottom: 0.2rem;
+}
+
+.remedy-description {
+  font-size: 1.08rem;
+  color: #57304e;
+  margin-bottom: 1.5rem;
+  background: #f8f0f5;
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+}
+
+.remedy-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.5rem;
+}
+
+.remedy-section {
+  flex: 1 1 250px;
+  background: #f6eaf7;
+  border-radius: 12px;
+  padding: 1.2rem 1.3rem 1.1rem 1.3rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(140, 82, 123, 0.06);
+}
+.remedy-section h2 {
+  color: #8B4E7D;
+  font-size: 1.15rem;
+  margin-bottom: 0.7rem;
+}
+.ingredients-list, .steps-list, .benefits-list {
+  margin: 0;
+  padding-left: 1.2rem;
+  font-size: 1rem;
+}
+.ingredients-list li, .steps-list li, .benefits-list li {
+  margin-bottom: 0.5rem;
+}
+
+.remedy-benefits {
+  color: #57304e;
+  font-size: 1.01rem;
+  background: #f8f0f5;
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+}
+
+@media (max-width: 900px) {
+  .remedy-header {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+  }
+  .remedy-image {
+    width: 160px;
+    height: 160px;
+  }
+}
+
+@media (max-width: 600px) {
+  .remedy-detail-container {
+    padding: 1.2rem 0.5rem;
+  }
+  .remedy-header {
+    gap: 0.7rem;
+  }
+  .remedy-content {
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+  .remedy-section {
+    padding: 0.8rem 0.7rem;
+  }
+}

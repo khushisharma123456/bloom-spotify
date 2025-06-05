@@ -1,0 +1,88 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    background-color: #fbe9f1;
+}
+body {
+    background-image: url('Images/Background.jpg');
+    background-size: cover; /* Makes image cover the entire viewport */
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.bloom-symbol {
+    width: 24px;
+    height: 24px;
+    margin-right: 1px;
+    vertical-align: middle;
+}
+
+.tagline {
+    color: white;
+    font-size: 12px;
+    margin-top: -20px;
+    margin-bottom: 30px;
+    font-style: italic;
+    max-width: 200px;
+    line-height: 1.4;
+}
+
+.sidebar {
+    width: 250px;
+    background: #8b4b82;
+    color: white;
+    padding: 20px;
+    height: 100vh;
+    position: fixed;
+}
+
+.sidebar h2 {
+    font-size: 28px;
+    margin-bottom: 40px;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+.sidebar ul li {
+    padding: 15px 0;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.main-content {
+    margin-left: 292px; /* 250px sidebar + 42px total padding */
+    padding: 20px;
+    flex-grow: 1;
+}
+
+.main-content h1 {
+    font-size: 32px;
+    margin-bottom: 30px;
+    color: #000;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.card h3 {
+    font-size: 18px;
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #000;
+}
+
+.card p {
+    margin: 0;
+    color: #000;
+    line-height: 1.5;
+}

@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloom - Menstrual Wellness Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #FFF9F9;
+            --sidebar-color: #F9F5FF;
+            --text-dark: #4A4A4A;
+            --text-light: #8A7FAA;
+            --accent-pink: #FFD6E0;
+            --accent-peach: #FFE8D6;
+            --accent-teal: #C1EDE6;
+            --accent-lavender: #E8E0FF;
+            --graph-pink: #FFB8D1;
+            --graph-lavender: #B8B3FF;
+            --primary-purple: #6E5B9A;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 240px;
+            background: linear-gradient(to bottom, var(--sidebar-color), white);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: fixed;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .logo {
+            font-family: 'Nunito', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-purple);
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            color: var(--graph-pink);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Nunito', sans-serif;
+            font-size: 16px;
+        }
+
+        .nav-item i {
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+            color: var(--text-light);
+        }
+
+        .nav-item:hover {
+            background-color: var(--accent-lavender);
+            color: var(--primary-purple);
+        }
+
+        .nav-item:hover i {
+            color: var(--primary-purple);
+        }
+
+        .nav-item.active {
+            background-color: var(--accent-pink);
+            color: var(--primary-purple);
+            font-weight: 600;
+        }
+
+        .nav-item.active i {
+            color: var(--primary-purple);
+        }
+
+        .profile {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            padding: 15px 10px;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--accent-teal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+
+        .profile-name {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 600;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-left: 240px;
+            padding: 30px 40px;
+            width: calc(100% - 240px);
+        }
+
+        .greeting {
+            margin-bottom: 30px;
+        }
+
+        .greeting h1 {
+            font-family: 'Nunito', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-purple);
+            margin-bottom: 5px;
+        }
+
+        .greeting p {
+            color: var(--text-light);
+            font-size: 16px;
+        }
+
+        /*=========================================*/
+
+        /* Graph Styles */
+.graph {
+    height: 200px;
+    position: relative;
+    margin-top: 30px;
+}
+
+.graph-gradient-area {
+    position: absolute;
+    top: 50px;
+    left: 0;
+    right: 0;
+    bottom: 40px;
+    background: linear-gradient(to bottom, rgba(255,214,224,0.3), rgba(232,224,255,0.3));
+    border-radius: 0 0 8px 8px;
+}
+
+.graph-line {
+    position: absolute;
+    top: 50px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: var(--primary-purple);
+    z-index: 2;
+}
+
+.graph-dot {
+    position: absolute;
+    top: 30px;
+    transform: translateX(-50%);
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.graph-dot .dot {
+    width: 12px;
+    height: 12px;
+    background-color: var(--primary-purple);
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 0 0 2px var(--primary-purple);
+}
+
+.graph-dot .dot-label {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--primary-purple);
+    font-weight: 600;
+}
+
+.graph-phase-labels {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 10px;
+}
+
+.phase-label {
+    font-size: 12px;
+    color: var(--text-light);
+}
+
+.graph-symptom-labels {
+    position: absolute;
+    top: 10px;
+    width: 100%;
+}
+
+.symptom-label {
+    position: absolute;
+    font-size: 12px;
+    color: var(--primary-purple);
+    background-color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    transform: translateX(-50%);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.graph-zone-labels {
+    position: absolute;
+    bottom: 60px;
+    width: 100%;
+}
+
+.zone-label {
+    position: absolute;
+    font-size: 12px;
+    color: white;
+    background-color: var(--primary-purple);
+    padding: 4px 12px;
+    border-radius: 20px;
+    transform: translateX(-50%);
+}
+
+/*==================================================*/
+        .graph-container {
+            background-color: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        .graph-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .graph-title {
+            font-family: 'Nunito', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .graph-encouragement {
+            display: flex;
+            align-items: center;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .graph-encouragement i {
+            margin-left: 8px;
+            color: var(--accent-teal);
+        }
+
+        .graph {
+            height: 200px;
+            position: relative;
+            margin-top: 30px;
+        }
+
+        .graph-line {
+            position: absolute;
+            bottom: 40px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(to right, var(--graph-pink), var(--graph-lavender));
+            border-radius: 2px;
+        }
+
+        .graph-point {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: linear-gradient(to right, var(--graph-pink), var(--graph-lavender));
+            border-radius: 50%;
+            bottom: 36px;
+            transform: translateX(-50%);
+            box-shadow: 0 0 0 4px rgba(255, 184, 209, 0.3);
+        }
+
+        .graph-point.active {
+            width: 20px;
+            height: 20px;
+            bottom: 34px;
+            box-shadow: 0 0 0 6px rgba(255, 184, 209, 0.3);
+        }
+
+        .graph-point::after {
+            content: attr(data-day);
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .graph-point.active::after {
+            font-weight: 600;
+            color: var(--primary-purple);
+        }
+
+        .graph-point::before {
+            content: attr(data-percent)'%';
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            background-color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .graph-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding: 0 10px;
+        }
+
+        .graph-label {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        /* Symptoms Section */
+        .symptoms-container {
+            background-color: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        .section-title {
+            font-family: 'Nunito', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .symptom-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .symptom-chip {
+            background-color: var(--accent-peach);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .symptom-chip:hover {
+            background-color: var(--accent-pink);
+        }
+
+        .symptom-chip.selected {
+            background-color: var(--accent-pink);
+            font-weight: 500;
+        }
+
+        .add-symptom {
+            background-color: transparent;
+            border: 1px dashed var(--text-light);
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+        }
+
+        .add-symptom i {
+            margin-right: 5px;
+        }
+
+        /* Cards Section */
+        .cards-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 16px;
+            padding: 20px;
+            flex: 1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-title {
+            font-family: 'Nunito', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .card-content {
+            margin-bottom: 20px;
+            color: var(--text-light);
+            font-size: 14px;
+            flex-grow: 1;
+        }
+
+        .card-button {
+            background-color: var(--accent-pink);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 600;
+            color: var(--primary-purple);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            align-self: flex-start;
+        }
+
+        .card-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-button.teal {
+            background-color: var(--accent-teal);
+            color: white;
+        }
+
+        /* Mood Section */
+        .mood-container {
+            background-color: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        .mood-options {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        .mood-option {
+            padding: 15px 25px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 24px;
+            background: var(--accent-lavender);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mood-option .mood-icon {
+            font-size: 32px;
+        }
+
+        .mood-option .mood-name {
+            font-size: 16px;
+            color: var(--text-dark);
+        }
+
+        .mood-option .stars {
+            display: flex;
+            gap: 5px;
+        }
+
+        .mood-option .star {
+            font-size: 20px;
+            cursor: pointer;
+            color: #ddd;
+            transition: color 0.3s ease;
+        }
+
+        .mood-option .star.active {
+            color: #FFD700;
+        }
+
+        .mood-feedback {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: var(--accent-peach);
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+
+        /* Spotify Section */
+        .spotify-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #282828;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+        }
+
+        .spotify-login-btn {
+            background: #1DB954;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .spotify-login-btn i {
+            font-size: 20px;
+        }
+
+        .spotify-login-btn:hover {
+            background: #1ed760;
+        }
+
+        .playlist-display {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .playlist-display iframe {
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .open-spotify-btn {
+            display: inline-block;
+            background: #1DB954;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+        }
+
+        .open-spotify-btn:hover {
+            background: #1ed760;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+                padding: 20px 15px;
+            }
+            
+            .main-content {
+                margin-left: 200px;
+                width: calc(100% - 200px);
+                padding: 25px 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+                padding: 20px 10px;
+                align-items: center;
+            }
+            
+            .nav-item span, .logo span, .profile-name {
+                display: none;
+            }
+            
+            .nav-item {
+                justify-content: center;
+                padding: 12px 0;
+            }
+            
+            .nav-item i {
+                margin-right: 0;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+                width: calc(100% - 70px);
+                padding: 20px;
+            }
+            
+            .cards-container {
+                flex-direction: column;
+            }
+            
+            .mood-options {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+            
+            .mood-option {
+                width: calc(50% - 15px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 15px;
+            }
+            
+            .graph-labels {
+                display: none;
+            }
+            
+            .mood-option {
+                width: 100%;
+            }
+        }
+
+        /* Mood and Spotify Section */
+        .mood-spotify-section {
+            margin-top: 40px;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .mood-spotify-section h2 {
+            font-family: 'Nunito', sans-serif;
+            color: var(--primary-purple);
+            margin-bottom: 20px;
+        }
+
+        .mood-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .mood-option {
+            padding: 15px 25px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 24px;
+            background: var(--accent-lavender);
+        }
+
+        .mood-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .mood-option.selected {
+            background: var(--accent-pink);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .star-rating {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .star {
+            font-size: 28px;
+            cursor: pointer;
+            color: #ddd;
+            transition: color 0.3s ease;
+        }
+
+        .star.active {
+            color: #FFD700;
+        }
+
+        .spotify-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #282828;
+            border-radius: 12px;
+            color: white;
+        }
+
+        .spotify-login-btn {
+            background: #1DB954;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s ease;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .spotify-login-btn:hover {
+            background: #1ed760;
+        }
+
+        .playlist-display {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .playlist-display iframe {
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .open-spotify-btn {
+            display: inline-block;
+            background: #1DB954;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+        }
+
+        .open-spotify-btn:hover {
+            background: #1ed760;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        
+        <div class="logo">
+            <i class="fas fa-spa"></i>
+            <span>Bloom</span>
+        </div>
+        
+        
+        <a href="/chatbot" class="menu-link">
+        <div class="nav-item active">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+        </div>
+        </a>
+
+        <a href="/yoga" class="menu-link">
+        <div class="nav-item">
+            <i class="fas fa-yin-yang"></i>
+            <span>Yoga</span>
+        </div>
+        </a>
+
+
+        <a href="/nutrition" class="menu-link">
+        <div class="nav-item">
+            <i class="fas fa-utensils"></i>
+            <span>Nutrition</span>
+        </div>
+        </a>
+
+
+        <a href="/mood" class="menu-link">
+        <div class="nav-item">
+            <i class="fas fa-smile"></i>
+            <span>Mood Tracker</span>
+        </div>
+        </a>
+
+
+        <a href="/consultation" class="menu-link">
+        <div class="nav-item">
+            <i class="fas fa-book-open"></i>
+            <span>Consultation</span>
+        </div>
+        </a>
+
+
+        <a href="/chatbot" class="menu-link">
+        <div class="nav-item">
+            <i class="fas fa-lightbulb"></i>
+            <span>Tips</span>
+        </div>
+        </a>
+
+
+        <a href="/chatbot" class="menu-link">
+        <div class="nav-item">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </div>
+        </a>
+        
+        <div class="profile">
+            <div class="profile-avatar">M</div>
+            <div class="profile-name">{{ user_name }}</div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="greeting">
+            <h1>Welcome, {{ user_name }}!</h1>
+            {% if current_day > 0 %}
+                <p>You're on Day {{ current_day }} of your {{ current_phase }} Phase</p>
+            {% else %}
+                <p>Track your period to see where you are in your cycle</p>
+            {% endif %}
+        </div>
+        
+        <!-- Cycle Sync Graph -->
+    <div class="graph-container">
+        <div class="graph-header">
+            <div class="graph-title">Cycle Sync</div>
+            <div class="graph-encouragement">
+                Let's get you to full-sync today! <i class="fas fa-seedling"></i>
+            </div>
+        </div>
+        
+        <div class="graph">
+            <!-- Gradient area below the line -->
+            <div class="graph-gradient-area"></div>
+            
+            <!-- Main line -->
+            <div class="graph-line"></div>
+            
+            <!-- Current day indicator -->
+            {% set cycle_percent = (current_day / cycle_length * 100) if current_day > 0 else 0 %}
+            <div class="graph-dot" style="left: {{ cycle_percent }}%;">
+                <div class="dot"></div>
+                <div class="dot-label">Today</div>
+            </div>
+            
+            <!-- Phase labels -->
+            <div class="graph-phase-labels">
+                <div class="phase-label">M1</div>
+                <div class="phase-label">M2</div>
+                <div class="phase-label">M3</div>
+                <div class="phase-label">Soon</div>
+            </div>
+            
+            <!-- Symptom labels -->
+            <div class="graph-symptom-labels">
+                <div class="symptom-label" style="left: 20%;">Dry skin</div>
+                <div class="symptom-label" style="left: 50%;">Low energy</div>
+                <div class="symptom-label" style="left: 80%;">Cravings</div>
+            </div>
+            
+            <!-- Zone labels -->
+            <div class="graph-zone-labels">
+                <div class="zone-label" style="left: 20%;">No change zone</div>
+                <div class="zone-label" style="left: 70%;">Harmony zone</div>
+            </div>
+        </div>
+    </div>
+        
+        <!-- Symptoms Section -->
+        <div class="symptoms-container">
+            <div class="section-title">Are you feeling any symptoms today?</div>
+            <div class="symptom-chips">
+                <div class="symptom-chip">Bloating</div>
+                <div class="symptom-chip selected">Cramps</div>
+                <div class="symptom-chip">Fatigue</div>
+                <div class="symptom-chip">Headache</div>
+                <div class="symptom-chip">Tender Breasts</div>
+                <div class="symptom-chip add-symptom">
+                    <i class="fas fa-plus"></i>
+                    <span>Custom</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Cards Section -->
+        <div class="cards-container">
+            <div class="card">
+                <div class="card-title">Waiting for your next Yoga Session</div>
+                <div class="card-content">Gentle yoga can help relieve menstrual discomfort. Join our live session in 15 minutes!</div>
+                <button class="card-button">Join Now</button>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Check out today's wellness tip</div>
+                <div class="card-content">"Stay hydrated with warm lemon water to help reduce bloating during your period."</div>
+                <button class="card-button teal">Explore Now</button>
+            </div>
+        </div>
+        
+        <!-- Mood and Spotify Section -->
+        <div class="mood-spotify-section">
+            <h2>How are you feeling today?</h2>
+            <div class="mood-selector">
+                <div class="mood-option" data-mood="happy">😃</div>
+                <div class="mood-option" data-mood="sad">😞</div>
+                <div class="mood-option" data-mood="angry">😡</div>
+                <div class="mood-option" data-mood="energetic">⚡</div>
+            </div>
+
+            <div class="star-rating">
+                <span class="star" data-rating="1">★</span>
+                <span class="star" data-rating="2">★</span>
+                <span class="star" data-rating="3">★</span>
+                <span class="star" data-rating="4">★</span>
+                <span class="star" data-rating="5">★</span>
+            </div>
+
+            <div class="spotify-section">
+                <button id="spotify-login" class="spotify-login-btn">
+                    Connect with Spotify
+                </button>
+                <div id="playlistDisplay" class="playlist-display"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Symptom Chip Selection
+        const symptomChips = document.querySelectorAll('.symptom-chip:not(.add-symptom)');
+        symptomChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                chip.classList.toggle('selected');
+            });
+        });
+        
+        // Mood selection
+        document.querySelectorAll('.mood-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.mood-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                const mood = this.dataset.mood;
+                const rating = document.querySelectorAll('.star.active').length;
+                if (rating > 0) {
+                    generatePlaylist(mood, rating);
+                }
+            });
+        });
+
+        // Star rating
+        document.querySelectorAll('.star').forEach(star => {
+            star.addEventListener('click', function() {
+                const rating = this.dataset.rating;
+                document.querySelectorAll('.star').forEach(s => {
+                    s.classList.toggle('active', s.dataset.rating <= rating);
+                });
+                
+                const selectedMood = document.querySelector('.mood-option.selected');
+                if (selectedMood) {
+                    generatePlaylist(selectedMood.dataset.mood, rating);
+                }
+            });
+        });
+        
+        // Mobile Menu Toggle (for responsive design)
+        function toggleMobileMenu() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.style.display = sidebar.style.display === 'none' ? 'flex' : 'none';
+        }
+        
+        // Check screen size and adjust sidebar accordingly
+        function checkScreenSize() {
+            const sidebar = document.querySelector('.sidebar');
+            if (window.innerWidth <= 480px) {
+                sidebar.style.display = 'none';
+            } else {
+                sidebar.style.display = 'flex';
+            }
+        };
+        
+        window.addEventListener('resize', checkScreenSize);
+        window.addEventListener('load', checkScreenSize);
+    </script>
+</body>
+</html>

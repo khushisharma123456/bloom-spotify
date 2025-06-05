@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Mood Tracker - Reflect, Track, Thrive</title>
+    <link rel="icon" href="assets/Daily Mood Tracker.png" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/moodcss.css') }}">
+    <style>
+        /* Add this to your CSS */
+.spotify-section {
+    margin-top: 30px;
+    padding: 20px;
+    background: #282828;
+    border-radius: 12px;
+    color: white;
+}
+
+.spotify-login-btn {
+    background: #1DB954;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.spotify-login-btn:hover {
+    background: #1ed760;
+}
+
+.playlist-display {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.playlist-display iframe {
+    border-radius: 12px;
+    margin: 20px 0;
+}
+
+.open-spotify-btn {
+    display: inline-block;
+    background: #1DB954;
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    margin-top: 10px;
+    transition: background 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.open-spotify-btn:hover {
+    background: #1ed760;
+}
+
+.spotify-login-prompt {
+    text-align: center;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.playlist-info {
+    margin-bottom: 20px;
+}
+
+.playlist-image img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin: 10px 0;
+}
+
+.playlist-description {
+    color: #b3b3b3;
+    font-size: 14px;
+    margin: 10px 0;
+}
+
+.sample-tracks {
+    text-align: left;
+    margin: 15px 0;
+}
+
+.sample-tracks ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sample-tracks li {
+    margin: 10px 0;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+}
+
+.play-preview {
+    background: transparent;
+    border: 1px solid #1DB954;
+    color: #1DB954;
+    border-radius: 15px;
+    padding: 3px 10px;
+    margin-left: 10px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.play-preview:hover {
+    background: #1DB954;
+    color: white;
+}
+
+.play-preview i {
+    margin-right: 5px;
+}
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="head">
+            <div class="logo-container">
+                <img src="Images/logo .png" alt="logo" class="logo">
+            </div>
+            <div class="left-header">
+                <a href="{{ url_for('dashboard') }}" class="home">Home</a>
+                <img src="Images/profile.png" alt="prf" class="profile">
+            </div>
+        </div>
+
+        <header class="glass-card">
+            <p style="position: relative; right: 13%; text-align: center;">Daily Mood Tracker</p>
+            <div class="header-controls">
+                <button type="button" id="calendar-toggle">📅</button>
+            </div>
+        </header>
+
+        <main>
+            <div class="mood-selector glass-card">
+                <h3>How are you feeling today?</h3>
+                <div class="mood-grid">
+                    <div class="mood-option" data-mood="happy">😃 Happy</div>
+                    <div class="mood-option" data-mood="content">🙂 Content</div>
+                    <div class="mood-option" data-mood="neutral">😐 Neutral</div>
+                    <div class="mood-option" data-mood="sad">😞 Sad</div>
+                    <div class="mood-option" data-mood="angry">😡 Angry</div>
+                </div>
+
+                <div class="intensity-selector">
+                    <h4>Intensity (1-5):</h4>
+                    <div class="star-rating">
+                        <span class="star" data-rating="1">★</span>
+                        <span class="star" data-rating="2">★</span>
+                        <span class="star" data-rating="3">★</span>
+                        <span class="star" data-rating="4">★</span>
+                        <span class="star" data-rating="5">★</span>
+                    </div>
+                </div>
+
+                <div class="note-section">
+                    <textarea id="mood-note" placeholder="Add any notes about your mood..."></textarea>
+                    <button type="button" id="save-btn" class="glass-card">Save Mood</button>
+                </div>
+            </div>
+
+            <div id="playlistDisplay" class="glass-card">
+                <!-- Spotify playlist will be displayed here -->
+                <p>Select your mood and intensity to get a personalized playlist recommendation</p>
+            </div>
+
+            <div class="history-container glass-card">
+                <h3>Your Mood History</h3>
+                <div id="moodHistory">
+                    <!-- Mood history will be loaded here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content glass-card">
+            <span class="close">&times;</span>
+            <h3 id="modal-title"></h3>
+            <div id="modal-text"></div>
+        </div>
+    </div>
+
+    <script>
+    // Add this to your index.html and mood.html
+document.addEventListener('DOMContentLoaded', function() {
+    // Check Spotify connection status when page loads
+    checkSpotifyStatus();
+    
+    // Mood selection handler
+    document.querySelectorAll('.mood-option').forEach(option => {
+        option.addEventListener('click', function() {
+            document.querySelectorAll('.mood-option').forEach(opt => opt.classList.remove('selected'));
+            this.classList.add('selected');
+            const mood = this.dataset.mood;
+            
+            // If intensity is already selected, fetch playlist
+            const activeStars = document.querySelectorAll('.star.active').length;
+            if (activeStars > 0) {
+                fetchMoodPlaylist(mood, activeStars);
+            }
+        });
+    });
+
+    // Star rating handler
+    document.querySelectorAll('.star').forEach(star => {
+        star.addEventListener('click', function() {
+            const rating = parseInt(this.dataset.rating);
+            
+            document.querySelectorAll('.star').forEach((s, index) => {
+                s.classList.toggle('active', index < rating);
+            });
+            
+            // If mood is already selected, fetch playlist
+            const selectedMood = document.querySelector('.mood-option.selected');
+            if (selectedMood) {
+                fetchMoodPlaylist(selectedMood.dataset.mood, rating);
+            }
+        });
+    });
+
+    // Spotify login button
+    document.getElementById('spotify-login').addEventListener('click', function() {
+        window.location.href = '/spotify_login';
+    });
+});
+
+function checkSpotifyStatus() {
+    fetch('/check_spotify_status')
+        .then(response => response.json())
+        .then(data => {
+            const spotifySection = document.querySelector('.spotify-section');
+            const playlistDisplay = document.getElementById('playlistDisplay');
+            
+            if (data.connected) {
+                // Update UI to show connected status
+                document.getElementById('spotify-login').textContent = `Connected as ${data.display_name}`;
+                document.getElementById('spotify-login').style.backgroundColor = '#1DB954';
+                
+                // Show any existing playlist if available
+                if (playlistDisplay.innerHTML.trim() === '') {
+                    playlistDisplay.innerHTML = `
+                        <p>Select a mood and intensity to get a personalized playlist</p>
+                    `;
+                }
+            } else {
+                // Show login prompt
+                playlistDisplay.innerHTML = `
+                    <div class="spotify-login-prompt">
+                        <p>Connect with Spotify to get personalized playlists for your mood!</p>
+                        <button id="spotify-login-btn" class="spotify-login-btn">
+                            <i class="fab fa-spotify"></i> Connect with Spotify
+                        </button>
+                    </div>
+                `;
+                
+                document.getElementById('spotify-login-btn').addEventListener('click', function() {
+                    window.location.href = '/spotify_login';
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error checking Spotify status:', error);
+        });
+}
+
+function fetchMoodPlaylist(mood, intensity) {
+    // First check if we have Spotify access
+    fetch('/get_mood_playlist', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            mood: mood,
+            intensity: intensity
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => { throw err; });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.error) {
+            if (data.error === 'Spotify not connected') {
+                showSpotifyLoginPrompt();
+            } else {
+                alert(data.error);
+            }
+        } else {
+            displayPlaylist(data);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        if (error.error === 'Spotify session expired. Please reconnect.') {
+            showSpotifyLoginPrompt('Your Spotify session has expired. Please reconnect.');
+        } else {
+            alert('Failed to load playlist: ' + (error.error || 'Unknown error'));
+        }
+    });
+}
+
+function displayPlaylist(playlistData) {
+    const playlistDisplay = document.getElementById('playlistDisplay');
+    
+    // Create sample tracks HTML
+    let sampleTracksHtml = '';
+    if (playlistData.sample_tracks && playlistData.sample_tracks.length > 0) {
+        sampleTracksHtml = `<div class="sample-tracks">
+            <h4>Sample Tracks:</h4>
+            <ul>`;
+        
+        playlistData.sample_tracks.forEach(track => {
+            const previewButton = track.preview_url ? 
+                `<button class="play-preview" data-preview="${track.preview_url}">
+                    <i class="fas fa-play"></i> Preview
+                </button>` : '';
+            
+            sampleTracksHtml += `
+                <li>
+                    <strong>${track.name}</strong> by ${track.artists}
+                    ${previewButton}
+                </li>`;
+        });
+        
+        sampleTracksHtml += `</ul></div>`;
+    }
+    
+    playlistDisplay.innerHTML = `
+        <div class="playlist-info">
+            <h3>${playlistData.playlist_name}</h3>
+            <p class="playlist-description">${playlistData.playlist_description}</p>
+            <div class="playlist-image">
+                <img src="${playlistData.playlist_image}" alt="${playlistData.playlist_name}">
+            </div>
+            <p>${playlistData.tracks} tracks • Curated by ${playlistData.owner}</p>
+            <a href="${playlistData.playlist_url}" target="_blank" class="open-spotify-btn">
+                <i class="fab fa-spotify"></i> Open in Spotify
+            </a>
+            ${sampleTracksHtml}
+        </div>
+        <iframe src="https://open.spotify.com/embed/playlist/${playlistData.playlist_id}" 
+                width="100%" height="380" frameborder="0" allowtransparency="true" 
+                allow="encrypted-media" style="border-radius: 12px;"></iframe>
+    `;
+    
+    // Add event listeners for preview buttons
+    document.querySelectorAll('.play-preview').forEach(button => {
+        button.addEventListener('click', function() {
+            const previewUrl = this.dataset.preview;
+            const audio = new Audio(previewUrl);
+            audio.play();
+            
+            // Change icon to pause when playing
+            const icon = this.querySelector('i');
+            icon.classList.remove('fa-play');
+            icon.classList.add('fa-pause');
+            
+            // Change back when finished
+            audio.onended = () => {
+                icon.classList.remove('fa-pause');
+                icon.classList.add('fa-play');
+            };
+        });
+    });
+}
+
+function showSpotifyLoginPrompt(message = 'Connect with Spotify to get personalized playlists for your mood!') {
+    const playlistDisplay = document.getElementById('playlistDisplay');
+    playlistDisplay.innerHTML = `
+        <div class="spotify-login-prompt">
+            <p>${message}</p>
+            <button id="spotify-login-btn" class="spotify-login-btn">
+                <i class="fab fa-spotify"></i> Connect with Spotify
+            </button>
+        </div>
+    `;
+    
+    document.getElementById('spotify-login-btn').addEventListener('click', function() {
+        window.location.href = '/spotify_login';
+    });
+}
+</script>
+</body>
+</html>

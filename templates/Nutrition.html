@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloom - Women's Wellness</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/Nutrition.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header (kept from previous version) -->
+        <div class="header">
+            <div>
+                <img src="Images/logo.png" alt="Bloom Logo" class="logo">
+            </div>
+            <div class="left-header">
+                <p class="home">Home</p>
+                <img src="Images/profile.png" alt="Profile" class="profile">
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Side Navigation -->
+            <nav class="side-nav">
+                <div class="nav-item active" data-section="water-tracker">
+                    <i class="nav-icon">💧</i>
+                    <span>Water Tracker</span>
+                </div>
+                <div class="nav-item" data-section="ayurveda">
+                    <i class="nav-icon">🌿</i>
+                    <span>Ayurvedic Remedies</span>
+                </div>
+                <div class="nav-item" data-section="recipes">
+                    <i class="nav-icon">🍲</i>
+                    <span>Healthy Recipes</span>
+                </div>
+                
+            </nav>
+
+            <!-- Content Sections -->
+            <div class="content-sections">
+                <!-- Water Tracker Section -->
+                <section id="water-tracker" class="content-section active">
+                    <div class="section-header">
+                        <h1>Daily Hydration Tracker</h1>
+                        <p>Stay hydrated for better menstrual health</p>
+                    </div>
+                    <div class="water-container">
+                        <div class="water-bottle">
+                            <div class="water-fill" style="height: 60%;">
+                                <span class="water-amount">1.2L</span>
+                            </div>
+                            <div class="water-markings">
+                                <span>2L</span>
+                                <span>1.5L</span>
+                                <span>1L</span>
+                                <span>0.5L</span>
+                            </div>
+                        </div>
+                        <div class="water-controls">
+                            <button class="water-btn">+250ml</button>
+                            <button class="water-btn">+500ml</button>
+                            <div class="water-progress">
+                                <span>60% of daily goal</span>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 60%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Ayurvedic Remedies Section -->
+                <section id="ayurveda" class="content-section">
+                    <div class="section-header">
+                        <h1>Ayurvedic Wellness</h1>
+                        <p>Traditional remedies for menstrual health</p>
+                        <div class="search-box">
+                            <input type="text" placeholder="Search remedies...">
+                            <button>🔍</button>
+                        </div>
+                    </div>
+                    
+                    <div class="remedy-categories">
+                        <button class="category-btn active">All</button>
+                        <button class="category-btn">Pain Relief</button>
+                        <button class="category-btn">Hormone Balance</button>
+                        <button class="category-btn">Bloating</button>
+                        <button class="category-btn">Energy Boost</button>
+                    </div>
+                    
+                    <div class="remedy-grid">
+                        <div class="recipe-card">
+        <div class="recipe-image" style="background-image: url('Images/ajwain-water.png');">
+            <span class="recipe-badge">Bloating</span>
+        </div>
+        <div class="recipe-info">
+            <h3>Ajwain Water</h3>
+            <div class="recipe-meta">
+                <span>🌿 Herbal</span>
+                <span>⏱️ 5 min</span>
+            </div>
+            <p>Relieves bloating by improving digestion and reducing gas.</p>
+            <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent.trim().replace(/\s+/g, '-').toLowerCase())">View Remedy →</button>
+        </div>
+    </div>
+
+    <div class="recipe-card">
+        <div class="recipe-image" style="background-image: url('Images/fennel-tea.png');">
+            <span class="recipe-badge">Bloating</span>
+        </div>
+        <div class="recipe-info">
+            <h3>Fennel Tea</h3>
+            <div class="recipe-meta">
+                <span>🍵 Caffeine-free</span>
+                <span>⏱️ 10 min</span>
+            </div>
+            <p>Reduces bloating and calms the digestive tract.</p>
+            <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent.trim().replace(/\s+/g, '-').toLowerCase())">View Remedy →</button>
+        </div>
+    </div>
+
+    <div class="recipe-card">
+        <div class="recipe-image" style="background-image: url('Images/triphala.png');">
+            <span class="recipe-badge">Bloating</span>
+        </div>
+        <div class="recipe-info">
+            <h3>Triphala Powder</h3>
+            <div class="recipe-meta">
+                <span>🧘‍♀️ Detox</span>
+                <span>⏱️ 2 min</span>
+            </div>
+            <p>Supports digestion and relieves chronic bloating.</p>
+            <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent.trim())">View Remedy →</button>
+        </div>
+    </div>
+
+    <div class="recipe-card">
+        <div class="recipe-image" style="background-image: url('Images/ginger.png');">
+            <span class="recipe-badge">Bloating</span>
+        </div>
+        <div class="recipe-info">
+            <h3>Ginger Elixir</h3>
+            <div class="recipe-meta">
+                <span>🫚 Warming</span>
+                <span>⏱️ 7 min</span>
+            </div>
+            <p>Boosts metabolism and alleviates gas and bloating.</p>
+            <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent.trim())">View Remedy →</button>
+        </div>
+    </div>
+
+    <div class="recipe-card">
+        <div class="recipe-image" style="background-image: url('Images/cumin-coriander-fennel.png');">
+            <span class="recipe-badge">Bloating</span>
+        </div>
+        <div class="recipe-info">
+            <h3>CCF Tea</h3>
+            <div class="recipe-meta">
+                <span>🫖 Detoxifying</span>
+                <span>⏱️ 10 min</span>
+            </div>
+            <p>A blend of cumin, coriander, and fennel seeds to ease digestion and bloating.</p>
+            <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent.trim())">View Remedy →</button>
+        </div>
+    </div>
+
+    <div class="recipe-card">
+        <div class="recipe-image" style="background-image: url('Images/hing-water.png');">
+            <span class="recipe-badge">Bloating</span>
+        </div>
+        <div class="recipe-info">
+            <h3>Hing (Asafoetida) Water</h3>
+            <div class="recipe-meta">
+                <span>🌱 Anti-gas</span>
+                <span>⏱️ 3 min</span>
+            </div>
+            <p>Powerful remedy for bloating and abdominal discomfort.</p>
+            <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent.trim())">View Remedy →</button>
+        </div>
+    </div>
+
+    <div class="recipe-card">
+        <div class="recipe-image" style="background-image: url('Images/lemon-honey.png');">
+            <span class="recipe-badge">Pain Relief and Bloating</span>
+        </div>
+        <div class="recipe-info">
+            <h3>Warm Lemon Honey Water</h3>
+            <div class="recipe-meta">
+                <span>🍋 Refreshing</span>
+                <span>⏱️ 5 min</span>
+            </div>
+            <p>Stimulates digestion and helps flush out excess gas.</p>
+            <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent.trim())">View Remedy →</button>
+        </div>
+    </div>
+    <div class="recipe-card">
+        <div class="recipe-image" style="background-image: url('Images/shatavari.png');">
+            <span class="recipe-badge">Hormone Balance</span>
+        </div>
+        <div class="recipe-info">
+            <h3>Shatavari Powder</h3>
+            <div class="recipe-meta">
+                <span>🌿 Rejuvenating</span>
+                <span>⏱️ 5 min</span>
+            </div>
+            <p>Balances estrogen and supports reproductive health.</p>
+            <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent.trim())">View Remedy →</button>
+        </div>
+    </div>
+
+    <div class="recipe-card">
+        <div class="recipe-image" style="background-image: url('Images/ashwagandha-hormone.png');">
+            <span class="recipe-badge">Hormone Balance</span>
+        </div>
+        <div class="recipe-info">
+            <h3>Ashwagandha Tea</h3>
+            <div class="recipe-meta">
+                <span>🧘 Stress-free</span>
+                <span>⏱️ 5 min</span>
+            </div>
+            <p>Helps regulate cortisol and thyroid hormone levels.</p>
+            <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent.trim())">View Remedy →</button>
+        </div>
+    </div>
+
+    <div class="recipe-card">
+        <div class="recipe-image" style="background-image: url('Images/flaxseeds.png');">
+            <span class="recipe-badge">Hormone Balance</span>
+        </div>
+        <div class="recipe-info">
+            <h3>Flaxseed Water</h3>
+            <div class="recipe-meta">
+                <span>🌰 Balancing</span>
+                <span>⏱️ 2 min</span>
+            </div>
+            <p>Supports hormonal balance and menstrual regularity.</p>
+            <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent.trim())">View Remedy →</button>
+        </div>
+    </div>
+
+    <div class="recipe-card">
+        <div class="recipe-image" style="background-image: url('Images/aloevera-juice.png');">
+            <span class="recipe-badge">Hormone Balance and Pain Relief</span>
+        </div>
+        <div class="recipe-info">
+            <h3>Aloe Vera Juice</h3>
+            <div class="recipe-meta">
+                <span>🧃 Detox</span>
+                <span>⏱️ 3 min</span>
+            </div>
+            <p>Maintains hormonal levels and soothes PCOS symptoms.</p>
+            <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Remedy →</button>
+        </div>
+    </div>
+
+    <div class="recipe-card">
+        <div class="recipe-image" style="background-image: url('Images/sesame-ladoo.png');">
+            <span class="recipe-badge">Hormone Balance</span>
+        </div>
+        <div class="recipe-info">
+            <h3>Sesame Ladoo</h3>
+            <div class="recipe-meta">
+                <span>🍬 Winter Tonic</span>
+                <span>⏱️ 20 min</span>
+            </div>
+            <p>Rich in zinc and calcium, supports female hormones.</p>
+            <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Remedy →</button>
+        </div>
+    </div>
+
+    <div class="recipe-card">
+        <div class="recipe-image" style="background-image: url('Images/methi-seeds.png');">
+            <span class="recipe-badge">Hormone Balance</span>
+        </div>
+        <div class="recipe-info">
+            <h3>Methi Seed Water</h3>
+            <div class="recipe-meta">
+                <span>🌿 Detox</span>
+                <span>⏱️ 4 min</span>
+            </div>
+            <p>Improves insulin sensitivity and hormonal balance.</p>
+            <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Remedy →</button>
+        </div>
+    </div>
+
+    <div class="recipe-card">
+        <div class="recipe-image" style="background-image: url('Images/hormone-kitchari.png');">
+            <span class="recipe-badge">Hormone Balance and Ebergy Boost</span>
+        </div>
+        <div class="recipe-info">
+            <h3>Hormone-Balancing Kitchari</h3>
+            <div class="recipe-meta">
+                <span>🥣 Light Meal</span>
+                <span>⏱️ 30 min</span>
+            </div>
+            <p>Easy-to-digest meal with balancing spices for hormonal support.</p>
+            <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Remedy →</button>
+        </div>
+    </div>
+    <div class="recipe-card">
+    <div class="recipe-image" style="background-image: url('Images/shatavari-elixir.png');">
+        <span class="recipe-badge">Hormonal Balance and Pain Relief</span>
+    </div>
+    <div class="recipe-info">
+        <h3>Shatavari Elixir</h3>
+        <div class="recipe-meta">
+            <span>🌸 Female Health</span>
+            <span>⏱️ 5 min</span>
+        </div>
+        <p>Balances estrogen levels and eases PMS or menopausal discomfort.</p>
+        <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Remedy →</button>
+    </div>
+</div>
+<div class="recipe-card">
+    <div class="recipe-image" style="background-image: url('Images/flaxseed-water.png');">
+        <span class="recipe-badge">Bloating and Hormone Balance</span>
+    </div>
+    <div class="recipe-info">
+        <h3>Flaxseed Water</h3>
+        <div class="recipe-meta">
+            <span>🌾 Cooling</span>
+            <span>⏱️ 10 min</span>
+        </div>
+        <p>Supports hormone balance and reduces inflammation naturally.</p>
+        <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Remedy →</button>
+    </div>
+</div>
+<div class="recipe-card">
+    <div class="recipe-image" style="background-image: url('Images/chasteberry-tea.png');">
+        <span class="recipe-badge">Pain Relief and Hormone Balance</span>
+    </div>
+    <div class="recipe-info">
+        <h3>Chasteberry Infusion</h3>
+        <div class="recipe-meta">
+            <span>🌿 Herbal</span>
+            <span>⏱️ 7 min</span>
+        </div>
+        <p>Promotes progesterone production and eases cycle-related pain.</p>
+        <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Remedy →</button>
+    </div>
+</div>
+<div class="recipe-card">
+    <div class="recipe-image" style="background-image: url('Images/evening-primrose.png');">
+        <span class="recipe-badge">Pain Relief and Hormone Balance</span>
+    </div>
+    <div class="recipe-info">
+        <h3>Evening Primrose Oil</h3>
+        <div class="recipe-meta">
+            <span>🧴 Supplement</span>
+            <span>⏱️ Daily</span>
+        </div>
+        <p>Supports hormonal health and reduces breast tenderness and cramps.</p>
+        <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Remedy →</button>
+    </div>
+</div>
+<div class="recipe-card">
+    <div class="recipe-image" style="background-image: url('Images/seed-cycling.png');">
+        <span class="recipe-badge">Hormone Balance</span>
+    </div>
+    <div class="recipe-info">
+        <h3>Seed Cycling Mix</h3>
+        <div class="recipe-meta">
+            <span>🌱 Nutrient-Rich</span>
+            <span>⏱️ 2 min</span>
+        </div>
+        <p>Rotating flax, pumpkin, sesame & sunflower seeds to regulate hormones.</p>
+        <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Remedy →</button>
+    </div>
+</div>
+<div class="recipe-card">
+        <div class="recipe-image" style="background-image: url('Images/chyawanprash.png');">
+            <span class="recipe-badge">Immunity and Energy Boost</span>
+        </div>
+        <div class="recipe-info">
+            <h3>Chyawanprash Spoon</h3>
+            <div class="recipe-meta">
+                <span>🍯 Daily Tonic</span>
+                <span>⏱️ 1 min</span>
+            </div>
+            <p>Classic herbal jam rich in amla and 40+ herbs to enhance energy and immunity.</p>
+            <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Remedy →</button>
+        </div>
+    </div>
+
+    <div class="recipe-card">
+        <div class="recipe-image" style="background-image: url('Images/dates-almond-shake.png');">
+            <span class="recipe-badge">Iron-rich and Energy Boost</span>
+        </div>
+        <div class="recipe-info">
+            <h3>Dates & Almond Shake</h3>
+            <div class="recipe-meta">
+                <span>🥤 Rejuvenating</span>
+                <span>⏱️ 10 min</span>
+            </div>
+            <p>Blended dates, almonds, and warm milk for a quick energy and strength boost.</p>
+            <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Remedy →</button>
+        </div>
+    </div>
+
+    <div class="recipe-card">
+        <div class="recipe-image" style="background-image: url('Images/moringa-tea.png');">
+            <span class="recipe-badge">Energy Boost</span>
+        </div>
+        <div class="recipe-info">
+            <h3>Moringa Tea</h3>
+            <div class="recipe-meta">
+                <span>🍵 Antioxidant</span>
+                <span>⏱️ 7 min</span>
+            </div>
+            <p>Rich in iron and vitamin C, moringa helps fight fatigue and restores vitality.</p>
+            <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Remedy →</button>
+        </div>
+    </div>
+
+    <div class="recipe-card">
+        <div class="recipe-image" style="background-image: url('Images/ashwagandha-latte.png');">
+            <span class="recipe-badge">Energy Boost</span>
+        </div>
+        <div class="recipe-info">
+            <h3>Ashwagandha Latte</h3>
+            <div class="recipe-meta">
+                <span>🧘 Calm Energy</span>
+                <span>⏱️ 8 min</span>
+            </div>
+            <p>Balances stress hormones and supports sustained energy throughout the day.</p>
+            <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Remedy →</button>
+        </div>
+    </div>
+
+                        <!-- Remedy Card 1 -->
+                        
+                        <!-- Recipe 4 -->
+                        <div class="recipe-card">
+                            <div class="recipe-image" style="background-image: url('Images/4h.png');">
+                                <span class="recipe-badge">Digestive</span>
+                            </div>
+                            <div class="recipe-info">
+                                <h3>Beetroot & Carrot Soup</h3>
+                                <div class="recipe-meta">
+                                    <span>🥗 180 cal</span>
+                                    <span>⏱️ 35 min</span>
+                                </div>
+                                <p>Detoxifying soup rich in antioxidants</p>
+                                <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Recipe →</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Recipe 5 -->
+                        <div class="recipe-card">
+                            <div class="recipe-image" style="background-image: url('Images/5h.png');">
+                                <span class="recipe-badge">Hormone Balance</span>
+                            </div>
+                            <div class="recipe-info">
+                                <h3>Flaxseed & Banana Smoothie</h3>
+                                <div class="recipe-meta">
+                                    <span>🥗 250 cal</span>
+                                    <span>⏱️ 10 min</span>
+                                </div>
+                                <p>Omega-3 rich smoothie for hormonal health</p>
+                                <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Recipe →</button>
+                            </div>
+                        </div>
+                        
+                       
+                        
+                        <!-- Recipe 7 -->
+                        <div class="recipe-card">
+                            <div class="recipe-image" style="background-image: url('Images/7h.png');">
+                                <span class="recipe-badge">Anti-inflammatory</span>
+                            </div>
+                            <div class="recipe-info">
+                                <h3>Turmeric Golden Milk</h3>
+                                <div class="recipe-meta">
+                                    <span>🥗 150 cal</span>
+                                    <span>⏱️ 10 min</span>
+                                </div>
+                                <p>Healing drink with turmeric and almond milk</p>
+                                <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Recipe →</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Recipe 8 -->
+                        
+                        <!-- Recipe 9 -->
+                        <div class="recipe-card">
+                            <div class="recipe-image" style="background-image: url('Images/9h.png');">
+                                <span class="recipe-badge">Energy Boost</span>
+                            </div>
+                            <div class="recipe-info">
+                                <h3>Dates & Nuts Ladoo</h3>
+                                <div class="recipe-meta">
+                                    <span>🥗 200 cal</span>
+                                    <span>⏱️ 20 min</span>
+                                </div>
+                                <p>Natural sweet energy balls for fatigue</p>
+                                <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Recipe →</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Recipe 10 -->
+                        <div class="recipe-card">
+                            <div class="recipe-image" style="background-image: url('Images/10h.png');">
+                                <span class="recipe-badge">Hydration</span>
+                            </div>
+                            <div class="recipe-info">
+                                <h3>Coconut Water & Chia Fresca</h3>
+                                <div class="recipe-meta">
+                                    <span>🥗 120 cal</span>
+                                    <span>⏱️ 5 min</span>
+                                </div>
+                                <p>Electrolyte-rich hydrating drink</p>
+                                <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Recipe →</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Recipe 11 -->
+                        <div class="recipe-card">
+                            <div class="recipe-image" style="background-image: url('Images/11h.png');">
+                                <span class="recipe-badge">Gut Health</span>
+                            </div>
+                            <div class="recipe-info">
+                                <h3>Fermented Rice Kanji</h3>
+                                <div class="recipe-meta">
+                                    <span>🥗 160 cal</span>
+                                    <span>⏱️ 12 hours</span>
+                                </div>
+                                <p>Probiotic-rich fermented rice drink</p>
+                                <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Recipe →</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Recipe 12 -->
+                        <div class="recipe-card">
+                            <div class="recipe-image" style="background-image: url('Images/12h.png');">
+                                <span class="recipe-badge">Bloating</span>
+                            </div>
+                            <div class="recipe-info">
+                                <h3>Cumin & Coriander Tea</h3>
+                                <div class="recipe-meta">
+                                    <span>🥗 50 cal</span>
+                                    <span>⏱️ 10 min</span>
+                                </div>
+                                <p>Digestive tea to reduce bloating</p>
+                                <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Recipe →</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Recipe 13 -->
+                        <div class="recipe-card">
+                            <div class="recipe-image" style="background-image: url('Images/13h.png');">
+                                <span class="recipe-badge">Mood Boost</span>
+                            </div>
+                            <div class="recipe-info">
+                                <h3>Dark Chocolate Oats</h3>
+                                <div class="recipe-meta">
+                                    <span>🥗 280 cal</span>
+                                    <span>⏱️ 15 min</span>
+                                </div>
+                                <p>Magnesium-rich breakfast for mood swings</p>
+                                <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Recipe →</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Recipe 14 -->
+                        <div class="recipe-card">
+                            <div class="recipe-image" style="background-image: url('Images/14h.png');">
+                                <span class="recipe-badge">Hormone Balance</span>
+                            </div>
+                            <div class="recipe-info">
+                                <h3>Broccoli & Almond Stir-fry</h3>
+                                <div class="recipe-meta">
+                                    <span>🥗 240 cal</span>
+                                    <span>⏱️ 20 min</span>
+                                </div>
+                                <p>Cruciferous veggies for estrogen balance</p>
+                                <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Recipe →</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Recipe 15 -->
+                        <div class="recipe-card">
+                            <div class="recipe-image" style="background-image: url('Images/15h.png');">
+                                <span class="recipe-badge">Pain Relief</span>
+                            </div>
+                            <div class="recipe-info">
+                                <h3>Ginger & Jaggery Tea</h3>
+                                <div class="recipe-meta">
+                                    <span>🥗 80 cal</span>
+                                    <span>⏱️ 12 min</span>
+                                </div>
+                                <p>Anti-inflammatory drink for cramps</p>
+                                <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Recipe →</button>
+                            </div>
+                        </div>
+                        <div class="recipe-card">
+        <div class="recipe-image" style="background-image: url('Images/methi-seed-water.png');">
+            <span class="recipe-badge">Hormonal Balance</span>
+        </div>
+        <div class="recipe-info">
+            <h3>Methi Seed Water</h3>
+            <div class="recipe-meta">
+                <span>🌿 Detox</span>
+                <span>⏱️ Soak Overnight</span>
+            </div>
+            <p>Soaked fenugreek seeds regulate blood sugar and support hormonal balance.</p>
+            <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Remedy →</button>
+        </div>
+    </div>
+
+    <div class="recipe-card">
+        <div class="recipe-image" style="background-image: url('Images/ashwagandha-milk.png');">
+            <span class="recipe-badge">Energy Boost</span>
+        </div>
+        <div class="recipe-info">
+            <h3>Ashwagandha with Warm Milk</h3>
+            <div class="recipe-meta">
+                <span>🥛 Bedtime</span>
+                <span>⏱️ 5 min</span>
+            </div>
+            <p>Reduces cortisol and boosts stamina, great for stress and hormone support.</p>
+            <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Remedy →</button>
+        </div>
+    </div>
+
+    <div class="recipe-card">
+        <div class="recipe-image" style="background-image: url('Images/sesame-oil-massage.png');">
+            <span class="recipe-badge">Therapeutic</span>
+        </div>
+        <div class="recipe-info">
+            <h3>Sesame Oil Massage</h3>
+            <div class="recipe-meta">
+                <span>💆‍♂️ Abhyanga</span>
+                <span>⏱️ 15 min</span>
+            </div>
+            <p>Improves circulation, calms the nervous system, and balances Vata dosha.</p>
+            <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Remedy →</button>
+        </div>
+    </div>
+
+    <div class="recipe-card">
+        <div class="recipe-image" style="background-image: url('Images/aloe-kesar-drink.png');">
+            <span class="recipe-badge">Cooling</span>
+        </div>
+        <div class="recipe-info">
+            <h3>Aloe Vera & Kesar Drink</h3>
+            <div class="recipe-meta">
+                <span>🧃 Refreshing</span>
+                <span>⏱️ 5 min</span>
+            </div>
+            <p>Improves skin, hormones, and liver health. Cooling and rejuvenating.</p>
+            <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Remedy →</button>
+        </div>
+    </div>
+
+    <div class="recipe-card">
+        <div class="recipe-image" style="background-image: url('Images/jeera-tea.png');">
+            <span class="recipe-badge">Digestive</span>
+        </div>
+        <div class="recipe-info">
+            <h3>Cumin Seed (Jeera) Tea</h3>
+            <div class="recipe-meta">
+                <span>🍵 Detox</span>
+                <span>⏱️ 10 min</span>
+            </div>
+            <p>Boosts digestion and energy; supports weight loss and hormone balance.</p>
+            <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Remedy →</button>
+        </div>
+    </div>
+
+    <div class="recipe-card">
+        <div class="recipe-image" style="background-image: url('Images/tulsi-cinnamon-tea.png');">
+            <span class="recipe-badge">Immuno-Modulating</span>
+        </div>
+        <div class="recipe-info">
+            <h3>Tulsi & Cinnamon Tea</h3>
+            <div class="recipe-meta">
+                <span>🌿 Balancing</span>
+                <span>⏱️ 7 min</span>
+            </div>
+            <p>Enhances metabolism, supports adrenal glands and menstrual cycles.</p>
+            <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Remedy →</button>
+        </div>
+    </div>
+                        <!-- Recipe 16 -->
+                        
+                        
+                        <!-- 10 more remedy cards would go here -->
+                    </div>
+                </section>
+
+                <!-- Healthy Recipes Section -->
+                <section id="recipes" class="content-section">
+                    <div class="section-header">
+                        <h1>Nutrition for Women</h1>
+                        <p>Recipes to support your cycle</p>
+                        <div class="recipe-filters">
+                            <select>
+                                <option>All</option>
+<option>Menstrual</option>
+<option>Follicular</option>
+<option>Ovulation</option>
+<option>Luteal</option>
+                            </select>
+                            <select>
+                                <option>All</option>
+                                <option>Breakfast</option>
+                                <option>Lunch</option>
+                                <option>Dinner</option>
+                                <option>Snacks</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="recipe-carousel">
+                       <div class="recipe-card">
+                            <div class="recipe-image" style="background-image: url('Images/1h.png');">
+                                <span class="recipe-badge">Iron-rich</span>
+                            </div>
+                            <div class="recipe-info">
+                                <h3>Quinoa Upma</h3>
+                                <div class="recipe-meta">
+                                    <span>🥗 320 cal</span>
+                                    <span>⏱️ 25 min</span>
+                                </div>
+                                <p>High-protein breakfast with quinoa and vegetables</p>
+                                <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Recipe →</button>
+                            </div>
+                        </div>
+                         <!-- Recipe 6 -->
+                        <div class="recipe-card">
+                            <div class="recipe-image" style="background-image: url('Images/6h.png');">
+                                <span class="recipe-badge">Iron Boost</span>
+                            </div>
+                            <div class="recipe-info">
+                                <h3>Palak Tofu Curry</h3>
+                                <div class="recipe-meta">
+                                    <span>🥗 310 cal</span>
+                                    <span>⏱️ 25 min</span>
+                                </div>
+                                <p>Iron-rich spinach with protein-packed tofu</p>
+                                <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Recipe →</button>
+                            </div>
+                        </div>
+                        <!-- Recipe 2 -->
+                        <div class="recipe-card">
+                            <div class="recipe-image" style="background-image: url('Images/2h.png');">
+                                <span class="recipe-badge">High Calcium</span>
+                            </div>
+                            <div class="recipe-info">
+                                <h3>Spinach & Paneer Paratha</h3>
+                                <div class="recipe-meta">
+                                    <span>🥗 280 cal</span>
+                                    <span>⏱️ 30 min</span>
+                                </div>
+                                <p>Iron and calcium rich stuffed flatbread</p>
+                                <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Recipe →</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Recipe 3 -->
+                        <div class="recipe-card">
+                            <div class="recipe-image" style="background-image: url('Images/3h.png');">
+                                <span class="recipe-badge">Energy Boost</span>
+                            </div>
+                            <div class="recipe-info">
+                                <h3>Moong Dal Chilla</h3>
+                                <div class="recipe-meta">
+                                    <span>🥗 220 cal</span>
+                                    <span>⏱️ 20 min</span>
+                                </div>
+                                <p>Protein-packed lentil pancakes with spices</p>
+                                <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Recipe →</button>
+                            </div>
+                        </div>
+                        <div class="recipe-card">
+                            <div class="recipe-image" style="background-image: url('Images/8h.png');">
+                                <span class="recipe-badge">Protein Rich</span>
+                            </div>
+                            <div class="recipe-info">
+                                <h3>Chana Chaat Salad</h3>
+                                <div class="recipe-meta">
+                                    <span>🥗 290 cal</span>
+                                    <span>⏱️ 15 min</span>
+                                </div>
+                                <p>Protein-packed chickpea salad with veggies</p>
+                                <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Recipe →</button>
+                            </div>
+                        </div>
+                        <div class="recipe-card">
+                            <div class="recipe-image" style="background-image: url('Images/16h.png');">
+                                <span class="recipe-badge">Protein Packed</span>
+                            </div>
+                            <div class="recipe-info">
+                                <h3>Sprouted Moong Salad</h3>
+                                <div class="recipe-meta">
+                                    <span>🥗 210 cal</span>
+                                    <span>⏱️ 15 min</span>
+                                </div>
+                                <p>High-protein sprouted lentils with veggies</p>
+                                <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Recipe →</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Example: Menstrual Phase - Lunch -->
+        <div class="recipe-card" data-phase="Menstrual" data-meal="Lunch">
+            <div class="recipe-image" style="background-image: url('Images/3h.png');">
+                <span class="recipe-badge">Menstrual • Lunch</span>
+            </div>
+            <div class="recipe-info">
+                <h3>Iron-Rich Palak Paratha</h3>
+                <div class="recipe-meta">
+                    <span>🥗 280 cal</span>
+                    <span>⏱️ 30 min</span>
+                </div>
+                <p>Iron and calcium rich stuffed flatbread, ideal for lunch during the menstrual phase.</p>
+                <button class="view-recipe">View Recipe →</button>
+            </div>
+        </div>
+        <!-- Example: Menstrual Phase - Dinner -->
+        <div class="recipe-card" data-phase="Menstrual" data-meal="Dinner">
+            <div class="recipe-image" style="background-image: url('Images/4h.png');">
+                <span class="recipe-badge">Menstrual • Dinner</span>
+            </div>
+            <div class="recipe-info">
+                <h3>Beetroot & Carrot Soup</h3>
+                <div class="recipe-meta">
+                    <span>🥗 180 cal</span>
+                    <span>⏱️ 35 min</span>
+                </div>
+                <p>Detoxifying soup rich in antioxidants, perfect for dinner during the menstrual phase.</p>
+                <button class="view-recipe">View Recipe →</button>
+            </div>
+        </div>
+        <!-- Example: Ovulation Phase - Lunch -->
+        <div class="recipe-card" data-phase="Ovulation" data-meal="Lunch">
+            <div class="recipe-image" style="background-image: url('Images/5h.png');">
+                <span class="recipe-badge">Ovulation • Lunch</span>
+            </div>
+            <div class="recipe-info">
+                <h3>Flaxseed & Banana Smoothie</h3>
+                <div class="recipe-meta">
+                    <span>🥗 250 cal</span>
+                    <span>⏱️ 10 min</span>
+                </div>
+                <p>Omega-3 rich smoothie for hormonal health, great for lunch during ovulation.</p>
+                <button class="view-recipe">View Recipe →</button>
+            </div>
+        </div>
+        <!-- Example: Ovulation Phase - Dinner -->
+        <div class="recipe-card" data-phase="Ovulation" data-meal="Dinner">
+            <div class="recipe-image" style="background-image: url('Images/6h.png');">
+                <span class="recipe-badge">Ovulation • Dinner</span>
+            </div>
+            <div class="recipe-info">
+                <h3>Quinoa & Veggie Bowl</h3>
+                <div class="recipe-meta">
+                    <span>🥗 320 cal</span>
+                    <span>⏱️ 25 min</span>
+                </div>
+                <p>Protein-packed bowl to support energy and hormone balance for ovulation dinner.</p>
+                <button class="view-recipe">View Recipe →</button>
+            </div>
+        </div>
+        <!-- Example: Luteal Phase - Lunch -->
+        <div class="recipe-card" data-phase="Luteal" data-meal="Lunch">
+            <div class="recipe-image" style="background-image: url('Images/7h.png');">
+                <span class="recipe-badge">Luteal • Lunch</span>
+            </div>
+            <div class="recipe-info">
+                <h3>Turmeric Golden Milk</h3>
+                <div class="recipe-meta">
+                    <span>🥗 150 cal</span>
+                    <span>⏱️ 10 min</span>
+                </div>
+                <p>Healing drink with turmeric and almond milk, ideal for lunch in the luteal phase.</p>
+                <button class="view-recipe">View Recipe →</button>
+            </div>
+        </div>
+        <!-- Example: Luteal Phase - Dinner -->
+        <div class="recipe-card" data-phase="Luteal" data-meal="Dinner">
+            <div class="recipe-image" style="background-image: url('Images/8h.png');">
+                <span class="recipe-badge">Luteal • Dinner</span>
+            </div>
+            <div class="recipe-info">
+                <h3>Chana Chaat Salad</h3>
+                <div class="recipe-meta">
+                    <span>🥗 290 cal</span>
+                    <span>⏱️ 15 min</span>
+                </div>
+                <p>Protein-packed chickpea salad with veggies, perfect for dinner in the luteal phase.</p>
+                <button class="view-recipe">View Recipe →</button>
+            </div>
+        </div>
+        <!-- Example: Follicular Phase - Lunch -->
+        <div class="recipe-card" data-phase="Follicular" data-meal="Lunch">
+            <div class="recipe-image" style="background-image: url('Images/9h.png');">
+                <span class="recipe-badge">Follicular • Lunch</span>
+            </div>
+            <div class="recipe-info">
+                <h3>Watermelon Seed Energy Bites</h3>
+                <div class="recipe-meta">
+                    <span>🥗 120 cal</span>
+                    <span>⏱️ 15 min</span>
+                </div>
+                <p>Iron-rich, crunchy bites made with roasted watermelon seeds, dates, and coconut. Great for snacking during the menstrual phase.</p>
+                <button class="view-recipe">View Recipe →</button>
+            </div>
+        </div>
+        <!-- Example: Follicular Phase - Dinner -->
+        <div class="recipe-card" data-phase="Follicular" data-meal="Dinner">
+            <div class="recipe-image" style="background-image: url('Images/11h.png');">
+                <span class="recipe-badge">Follicular • Dinner</span>
+            </div>
+            <div class="recipe-info">
+                <h3>Fermented Rice Kanji</h3>
+                <div class="recipe-meta">
+                    <span>🥗 160 cal</span>
+                    <span>⏱️ 12 hours</span>
+                </div>
+                <p>Probiotic-rich fermented rice drink, ideal for dinner in the follicular phase.</p>
+                <button class="view-recipe">View Recipe →</button>
+            </div>
+        </div>
+                        <!-- Example: Menstrual Phase - Snacks -->
+        <div class="recipe-card" data-phase="Menstrual" data-meal="Snacks">
+            <div class="recipe-image" style="background-image: url('Images/watermelon-seed-bites.png');">
+                <span class="recipe-badge">Menstrual • Snacks</span>
+            </div>
+            <div class="recipe-info">
+                <h3>Watermelon Seed Energy Bites</h3>
+                <div class="recipe-meta">
+                    <span>🥗 120 cal</span>
+                    <span>⏱️ 15 min</span>
+                </div>
+                <p>Iron-rich, crunchy bites made with roasted watermelon seeds, dates, and coconut. Great for snacking during the menstrual phase.</p>
+                <button class="view-recipe">View Recipe →</button>
+            </div>
+        </div>
+        <!-- Example: Ovulation Phase - Snacks -->
+        <div class="recipe-card" data-phase="Ovulation" data-meal="Snacks">
+            <div class="recipe-image" style="background-image: url('Images/chia-yogurt-parfait.png');">
+                <span class="recipe-badge">Ovulation • Snacks</span>
+            </div>
+            <div class="recipe-info">
+                <h3>Chia Yogurt Parfait</h3>
+                <div class="recipe-meta">
+                    <span>🥗 180 cal</span>
+                    <span>⏱️ 10 min</span>
+                </div>
+                <p>Layered parfait with chia pudding, yogurt, and berries. Omega-3 boost for ovulation snacks.</p>
+                <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Remedy →</button>
+            </div>
+        </div>
+        <!-- Example: Luteal Phase - Snacks -->
+        <div class="recipe-card" data-phase="Luteal" data-meal="Snacks">
+            <div class="recipe-image" style="background-image: url('Images/chia-cocoa-balls.png');">
+                <span class="recipe-badge">Luteal • Snacks</span>
+            </div>
+            <div class="recipe-info">
+                <h3>Chia Cocoa Bliss Balls</h3>
+                <div class="recipe-meta">
+                    <span>🥗 140 cal</span>
+                    <span>⏱️ 12 min</span>
+                </div>
+                <p>Chocolatey snack balls with chia seeds, dates, and nuts. Satisfies cravings and supports mood in the luteal phase.</p>
+                <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Remedy →</button>
+            </div>
+        </div>
+        <!-- Example: Follicular Phase - Snacks -->
+        <div class="recipe-card" data-phase="Follicular" data-meal="Snacks">
+            <div class="recipe-image" style="background-image: url('Images/watermelon-chia-pops.png');">
+                <span class="recipe-badge">Follicular • Snacks</span>
+            </div>
+            <div class="recipe-info">
+                <h3>Watermelon Chia Popsicles</h3>
+                <div class="recipe-meta">
+                    <span>🥗 90 cal</span>
+                    <span>⏱️ 5 min + freeze</span>
+                </div>
+                <p>Refreshing popsicles made with watermelon, chia seeds, and mint. Perfect for follicular phase snacking.</p>
+                <button class="view-recipe" onclick="window.location.href='/remedy/' + encodeURIComponent(this.closest('.recipe-info').querySelector('h3').textContent)">View Remedy →</button>
+            </div>
+        </div>
+                        <!-- More recipe cards would go here -->
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='css/Nutrition.js') }}"></script>
+</body>
+</html>

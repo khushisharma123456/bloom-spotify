@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= remedy.name %> - Bloom</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/remedy.css') }}">
+</head>
+<body>
+    <div class="remedy-detail-container">
+        <button class="back-btn" onclick="window.history.back()">← Back</button>
+        
+        <% if (remedy.image) { %>
+            <img src="<%= remedy.image %>" alt="<%= remedy.name %>" class="remedy-image">
+        <% } else { %>
+            <img src="/Images/default-remedy.png" alt="<%= remedy.name %>" class="remedy-image">
+        <% } %>
+        
+        <div class="remedy-meta">
+            <h1><%= remedy.name %></h1>
+            <% if (remedy.badge) { %>
+                <span class="remedy-badge"><%= remedy.badge %></span>
+            <% } %>
+            <% if (remedy.time) { %>
+                <div class="remedy-time">⏱️ <%= remedy.time %></div>
+            <% } %>
+            <% if (remedy.calories) { %>
+                <div class="remedy-calories">🔥 <%= remedy.calories %></div>
+            <% } %>
+        </div>
+
+        <% if (remedy.description) { %>
+            <p class="remedy-description"><%= remedy.description %></p>
+        <% } %>
+
+        <div class="remedy-section">
+            <h2>Ingredients</h2>
+            <ul>
+                <% (remedy.ingredients || []).forEach(function(ingredient) { %>
+                    <li><%= ingredient %></li>
+                <% }); %>
+            </ul>
+        </div>
+
+        <div class="remedy-section">
+            <h2>Preparation Steps</h2>
+            <ol>
+                <% (remedy.steps || []).forEach(function(step) { %>
+                    <li><%= step %></li>
+                <% }); %>
+            </ol>
+        </div>
+    </div>
+</body>
+</html>

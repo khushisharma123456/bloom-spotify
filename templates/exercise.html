@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloom - Meditative Exercises</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --lavender: #e6e6fa;
+            --sky-blue: #87cefa;
+            --soft-pink: #ffb6c1;
+            --white: #fff;
+            --light-gray: #f5f5f5;
+            --dark-gray: #333;
+            --rounded: 12px;
+            --shadow: 0 4px 12px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            background-color: #fef6f9;
+            color: #333;
+        }
+
+        /* Left Panel - Controls & Sequence */
+        .left-panel {
+            width: 35%;
+            background: linear-gradient(135deg, var(--lavender) 0%, var(--sky-blue) 100%);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .play-pause-btn, .end-routine-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            background-color: var(--white);
+            color: var(--soft-pink);
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .play-pause-btn:hover, .end-routine-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .end-routine-btn {
+            background-color: #f8d7da;
+            color: #dc3545;
+        }
+
+        .timer {
+            font-size: 48px;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .music-controls {
+            width: 100%;
+            margin-bottom: 20px;
+            background-color: rgba(255,255,255,0.3);
+            border-radius: var(--rounded);
+            padding: 15px;
+        }
+
+        .music-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 10px;
+        }
+
+        .music-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .music-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 20px;
+            background-color: rgba(255,255,255,0.7);
+            color: #5a4a6a;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .music-btn:hover {
+            background-color: var(--white);
+        }
+
+        .music-btn.active {
+            background-color: var(--soft-pink);
+            color: white;
+        }
+
+        .volume-control {
+            width: 100%;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .volume-control i {
+            color: var(--white);
+        }
+
+        .volume-slider {
+            flex-grow: 1;
+        }
+
+        .sequence-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 15px;
+        }
+
+        .exercise-list {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .exercise-item {
+            background-color: rgba(255,255,255,0.7);
+            border-radius: var(--rounded);
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .exercise-item.current {
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            transform: scale(1.02);
+            border-left: 5px solid var(--soft-pink);
+        }
+
+        .exercise-item.completed {
+            opacity: 0.7;
+        }
+
+        .exercise-item.upcoming {
+            opacity: 0.9;
+        }
+
+        .exercise-name {
+            font-weight: 600;
+            color: #5a4a6a;
+        }
+
+        .exercise-duration {
+            color: #5a4a6a;
+            font-size: 14px;
+        }
+
+        .exercise-item.current .exercise-name,
+        .exercise-item.current .exercise-duration {
+            color: var(--dark-gray);
+        }
+
+        /* Right Panel - Animation & Instructions */
+        .right-panel {
+            width: 65%;
+            background-color: var(--white);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .animation-container {
+            height: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            background-color: var(--light-gray);
+            border-radius: var(--rounded);
+            overflow: hidden;
+        }
+
+        .animation-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #888;
+        }
+
+        .instructions-container {
+            flex-grow: 1;
+            background-color: rgba(230,230,250,0.3);
+            border-radius: var(--rounded);
+            padding: 25px;
+        }
+
+        .exercise-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #5a4a6a;
+            margin-bottom: 15px;
+        }
+
+        .instructions {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #5a4a6a;
+        }
+
+        .completion-message {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+        }
+
+        .completion-message h2 {
+            font-size: 32px;
+            color: #5a4a6a;
+            margin-bottom: 20px;
+        }
+
+        .restart-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--rounded);
+            background-color: var(--soft-pink);
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .restart-btn:hover {
+            background-color: #ff9aae;
+            transform: scale(1.05);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+                height: auto;
+                overflow-y: auto;
+            }
+
+            .left-panel, .right-panel {
+                width: 100%;
+                height: auto;
+            }
+
+            .left-panel {
+                order: 2;
+            }
+
+            .right-panel {
+                order: 1;
+            }
+
+            .animation-container {
+                height: 300px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Left Panel - Controls & Sequence -->
+    <div class="left-panel">
+        <div class="controls">
+            <div class="control-buttons">
+                <button class="play-pause-btn" id="play-pause-btn">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button class="end-routine-btn" id="end-routine-btn">
+                    <i class="fas fa-stop"></i>
+                </button>
+            </div>
+            <div class="timer" id="timer">00:00</div>
+            
+            <div class="music-controls">
+                <div class="music-title">Background Music</div>
+                <div class="music-options">
+                    <button class="music-btn" data-music="none">None</button>
+                    <button class="music-btn active" data-music="rain">Rain</button>
+                    <button class="music-btn" data-music="forest">Forest</button>
+                    <button class="music-btn" data-music="singing-bowl">Singing Bowl</button>
+                    <button class="music-btn" data-music="ocean">Ocean</button>
+                </div>
+                <div class="volume-control">
+                    <i class="fas fa-volume-down"></i>
+                    <input type="range" class="volume-slider" id="volume-slider" min="0" max="1" step="0.1" value="0.5">
+                    <i class="fas fa-volume-up"></i>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="sequence-title">Meditation Sequence</h3>
+        <div class="exercise-list" id="exercise-list">
+            <!-- Exercises will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Right Panel - Animation & Instructions -->
+    <div class="right-panel">
+        <div class="animation-container">
+            <div class="animation-placeholder" id="animation-placeholder">
+                Animation will appear here
+            </div>
+        </div>
+
+        <div class="instructions-container" id="instructions-container">
+            <h2 class="exercise-title" id="exercise-title">Exercise Name</h2>
+            <div class="instructions" id="instructions">
+                Instructions will appear here
+            </div>
+        </div>
+
+        <div class="completion-message" id="completion-message">
+            <h2>Routine Complete!</h2>
+            <p>Great job completing your meditation session.</p>
+            <button class="restart-btn" id="restart-btn">Start Again</button>
+        </div>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="rain-audio" loop>
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-rain-ambience-1247.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="forest-audio" loop>
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-forest-ambience-1681.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="singing-bowl-audio" loop>
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-singing-bowl-2060.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="ocean-audio" loop>
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-ocean-waves-loop-1244.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // Sample exercise data
+        const exercises = [
+            {
+                name: "Deep Breathing",
+                duration: 60, // in seconds
+                animation: "🧘‍♀️",
+                instructions: "Sit comfortably with your back straight. Inhale deeply through your nose for 4 seconds, hold for 4 seconds, then exhale slowly through your mouth for 6 seconds. Focus on the rhythm of your breath."
+            },
+            {
+                name: "Body Scan",
+                duration: 90,
+                animation: "👐",
+                instructions: "Starting from your toes, gradually bring awareness to each part of your body. Notice any tension and consciously relax each area as you move up to your head."
+            },
+            {
+                name: "Loving-Kindness Meditation",
+                duration: 120,
+                animation: "💖",
+                instructions: "Silently repeat positive phrases like 'May I be happy, may I be healthy.' Then extend these wishes to loved ones, acquaintances, and eventually all beings."
+            },
+            {
+                name: "Mindful Observation",
+                duration: 60,
+                animation: "👀",
+                instructions: "Choose a natural object nearby and focus on watching it. Observe every detail as if seeing it for the first time, without labeling or judging."
+            },
+            {
+                name: "Gratitude Reflection",
+                duration: 90,
+                animation: "🙏",
+                instructions: "Bring to mind three things you're grateful for. Sit with each one, noticing the positive feelings they evoke in your body and mind."
+            }
+        ];
+
+        // DOM Elements
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const endRoutineBtn = document.getElementById('end-routine-btn');
+        const timerDisplay = document.getElementById('timer');
+        const exerciseList = document.getElementById('exercise-list');
+        const animationPlaceholder = document.getElementById('animation-placeholder');
+        const exerciseTitle = document.getElementById('exercise-title');
+        const instructions = document.getElementById('instructions');
+        const instructionsContainer = document.getElementById('instructions-container');
+        const completionMessage = document.getElementById('completion-message');
+        const restartBtn = document.getElementById('restart-btn');
+        const musicButtons = document.querySelectorAll('.music-btn');
+        const volumeSlider = document.getElementById('volume-slider');
+        
+        // Audio elements
+        const rainAudio = document.getElementById('rain-audio');
+        const forestAudio = document.getElementById('forest-audio');
+        const singingBowlAudio = document.getElementById('singing-bowl-audio');
+        const oceanAudio = document.getElementById('ocean-audio');
+        const audioElements = {
+            'rain': rainAudio,
+            'forest': forestAudio,
+            'singing-bowl': singingBowlAudio,
+            'ocean': oceanAudio
+        };
+
+        // State variables
+        let currentExerciseIndex = 0;
+        let timeRemaining = exercises[0].duration;
+        let timerInterval;
+        let isPlaying = false;
+        let currentMusic = 'rain';
+        let currentVolume = 0.5;
+
+        // Initialize the page
+        function init() {
+            renderExerciseList();
+            updateExerciseDisplay();
+            updateTimerDisplay();
+            setVolume(currentVolume);
+            playAudio('rain');
+        }
+
+        // Render the exercise list
+        function renderExerciseList() {
+            exerciseList.innerHTML = '';
+            exercises.forEach((exercise, index) => {
+                const exerciseItem = document.createElement('div');
+                exerciseItem.className = 'exercise-item';
+                if (index === currentExerciseIndex) {
+                    exerciseItem.classList.add('current');
+                } else if (index < currentExerciseIndex) {
+                    exerciseItem.classList.add('completed');
+                } else {
+                    exerciseItem.classList.add('upcoming');
+                }
+
+                exerciseItem.innerHTML = `
+                    <span class="exercise-name">${exercise.name}</span>
+                    <span class="exercise-duration">${formatTime(exercise.duration)}</span>
+                `;
+
+                exerciseItem.addEventListener('click', () => {
+                    if (isPlaying) {
+                        pauseTimer();
+                    }
+                    currentExerciseIndex = index;
+                    timeRemaining = exercises[index].duration;
+                    updateExerciseDisplay();
+                    updateTimerDisplay();
+                    renderExerciseList();
+                });
+
+                exerciseList.appendChild(exerciseItem);
+            });
+        }
+
+        // Update the exercise display (right panel)
+        function updateExerciseDisplay() {
+            if (currentExerciseIndex < exercises.length) {
+                const currentExercise = exercises[currentExerciseIndex];
+                exerciseTitle.textContent = currentExercise.name;
+                instructions.textContent = currentExercise.instructions;
+                animationPlaceholder.textContent = currentExercise.animation;
+                
+                instructionsContainer.style.display = 'block';
+                completionMessage.style.display = 'none';
+            } else {
+                // Routine complete
+                instructionsContainer.style.display = 'none';
+                completionMessage.style.display = 'flex';
+            }
+        }
+
+        // Format time as MM:SS
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Update the timer display
+        function updateTimerDisplay() {
+            timerDisplay.textContent = formatTime(timeRemaining);
+        }
+
+        // Start the timer
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    nextExercise();
+                }
+            }, 1000);
+        }
+
+        // Pause the timer
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+
+        // Move to next exercise
+        function nextExercise() {
+            currentExerciseIndex++;
+            
+            if (currentExerciseIndex < exercises.length) {
+                timeRemaining = exercises[currentExerciseIndex].duration;
+                updateExerciseDisplay();
+                updateTimerDisplay();
+                renderExerciseList();
+                
+                if (isPlaying) {
+                    startTimer();
+                }
+            } else {
+                // Routine complete
+                updateExerciseDisplay();
+                playPauseBtn.innerHTML = '<i class="fas fa-redo"></i>';
+                isPlaying = false;
+            }
+        }
+
+        // Play selected audio
+        function playAudio(type) {
+            // Stop all audio first
+            Object.values(audioElements).forEach(audio => {
+                audio.pause();
+                audio.currentTime = 0;
+            });
+            
+            if (type !== 'none') {
+                audioElements[type].volume = currentVolume;
+                audioElements[type].play();
+            }
+            
+            currentMusic = type;
+        }
+
+        // Set volume for all audio
+        function setVolume(volume) {
+            currentVolume = volume;
+            Object.values(audioElements).forEach(audio => {
+                audio.volume = volume;
+            });
+        }
+
+        // End the current routine
+        function endRoutine() {
+            currentExerciseIndex = exercises.length;
+            timeRemaining = 0;
+            isPlaying = false;
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            updateExerciseDisplay();
+            updateTimerDisplay();
+            renderExerciseList();
+            pauseTimer();
+        }
+
+        // Play/Pause button click handler
+        playPauseBtn.addEventListener('click', () => {
+            if (currentExerciseIndex >= exercises.length) {
+                // Restart routine if completed
+                currentExerciseIndex = 0;
+                timeRemaining = exercises[0].duration;
+                updateExerciseDisplay();
+                updateTimerDisplay();
+                renderExerciseList();
+            }
+            
+            isPlaying = !isPlaying;
+            
+            if (isPlaying) {
+                playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                startTimer();
+            } else {
+                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+                pauseTimer();
+            }
+        });
+
+        // End Routine button click handler
+        endRoutineBtn.addEventListener('click', endRoutine);
+
+        // Restart button click handler
+        restartBtn.addEventListener('click', () => {
+            currentExerciseIndex = 0;
+            timeRemaining = exercises[0].duration;
+            isPlaying = false;
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            updateExerciseDisplay();
+            updateTimerDisplay();
+            renderExerciseList();
+            pauseTimer();
+        });
+
+        // Music selection buttons
+        musicButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                musicButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                playAudio(button.dataset.music);
+            });
+        });
+
+        // Volume control
+        volumeSlider.addEventListener('input', (e) => {
+            setVolume(parseFloat(e.target.value));
+        });
+
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="user-scalable=0, width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>Report</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/mobile.css">
+    <link rel="stylesheet" type="text/css" href="css/report.css">
+    <script type='text/javascript' src='js/mobile.js'></script>
+</head>
+
+<body  onload="reports()">
+    <div id="header">
+        <!-- <h1><a href="index.html">Virtual Yoga Instructor<span>Rehabilitation Yoga</span></a></h1> -->
+        <ul id="navigation">
+            <li>
+                <a href="index.html">Home</a>
+            </li>
+            <li>
+                <a href="about.html">About</a>
+            </li>
+            <li>
+                <a href="Admin.html">List</a>
+            </li>
+        </ul>
+    </div>
+    <div class="container">
+		<div class="weather-card">
+			<div class="image-section">
+				<div class="layer"></div>
+				<div class="weather"></div>
+				<small class="type">YOGA</small>
+			</div>
+			<div class="info-section">
+				<div class="wave"></div>
+				<div class="layer-1"></div>
+				<div class="layer-2"></div>
+				<div class="layer-3"></div>
+				<div  class="contents">
+					<h1 id="pts"></h1>
+					<h3 id="pose"></h3>
+					<small id="time"></small>
+				</div>
+			</div>
+		</div>
+	</div>
+    <script>
+        function reports()
+        {
+            let posesList = {
+                1: "Namaskar",
+                2: "Warrior Pose 2",
+                3: "Hastauttanasana",
+                4: "Relax"
+            }
+            let poseNumber = localStorage.getItem("poseNumber");
+            energy = localStorage.getItem("energy");
+            document.getElementById("pts").innerHTML = energy+" Points";
+            document.getElementById("time").innerHTML = Date();
+            document.getElementById("pose").innerHTML = posesList[poseNumber];
+            // alert(posesList[poseNumber]+" "+energy);
+
+            
+        }
+    </script>
+</body>
+
+</html>

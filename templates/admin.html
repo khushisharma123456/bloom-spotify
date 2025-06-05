@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="user-scalable=0, width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <title>Pose List</title>
+  <link rel="stylesheet" type="text/css" href="static/css/style.css">
+  <link rel="stylesheet" type="text/css" href="static/css/mobile.css">
+  <link rel="stylesheet" type="text/css" href="static/css/cards.css">
+  <script type='text/javascript' src='static/css/mobile.js'></script>
+</head>
+
+<body>
+  <div id="header">
+    <div id="logo-area">
+      <img src="/static/images/logo.png" alt="Yoga Logo" id="logo">
+      <div id="brand-container">
+        <span id="brand-name">Bloom</span>
+        <span id="brand-tagline">From Crampy to Happy, We've Got You Covered.</span>
+      </div>
+      <div id="brand-container">
+        <span id="brand-name">Virtual Yoga Instructor</span>
+      </div>
+    </div>
+    <ul id="navigation">
+      <li>
+        <a href="/index">HOME</a>
+      </li>
+      <li>
+        <a href="/about">ABOUT</a>
+      </li>
+      <li class="current">
+        <a href="/admin">LIST</a>
+      </li>
+    </ul>
+  </div>
+  <main class="page-content">
+
+    <div class="card">
+      <div class="content">
+        <h2 class="title">Namaskar</h2>
+        <p class="copy">Stand at the end of your mat, keep your feet together and distribute your weight on both feet
+          equally.
+          Open your chest and just relax your shoulders.
+        </p>
+        <a href="/train">
+          <button onclick="poseNumber(1)" class="btn">Practice</button>
+        </a>
+      </div>
+    </div>
+    <div class="card">
+      <div class="content">
+        <h2 class="title">Warrior Pose 2</h2>
+        <p class="copy">standing with your feet hip-distance apart and your arms at your sides. Let go of distractions.
+          Draw your awareness inward, to the center of your body. Turn to the left.</p>
+        <a href="/train">
+          <button onclick="poseNumber(2)" class="btn">Practice</button>
+        </a>
+      </div>
+    </div>
+    <div class="card">
+      <div class="content">
+        <h2 class="title">Hastauttanasana</h2>
+        <p class="copy">Breath in and lift your arms up and back.
+          Make sure that your biceps are close to your ears.
+          Make effort to stretch your whole body starting from the heels up to the finger tips.</p>
+        <a href="Train.html">
+          <button onclick="poseNumber(3)" class="btn">Practice</button>
+        </a>
+      </div>
+    </div>
+    <div class="card">
+      <div class="content">
+        <h2 class="title">Relax</h2>
+        <p class="copy">This one is a deeply relaxing posture. Gives you deep rest and total relaxation of the back.</p>
+        <a href="/train">
+          <button onclick="poseNumber(4)" class="btn">Practice</button>
+        </a>
+      </div>
+    </div>
+    <div class="card">
+      <div class="content">
+
+        <h2 class="title">Add New</h2>
+        <a href="/New-Pose">
+          <button class="btn">New Pose</button>
+        </a>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function poseNumber(num) {
+      // alert(num);
+      localStorage.setItem("poseNumber",num);
+    }
+    
+  </script>
+</body>
+
+</html>

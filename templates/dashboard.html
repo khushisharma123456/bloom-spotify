@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloom - From Crampy to Happy</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/Landing.css') }}">
+
+</head>
+<body>
+    <div class="app-container">
+        <div class="background"></div>
+        <div class="sparkles"></div>
+        
+        
+        <div class="header">
+            <div class="logo">
+                <img src="static/Images/logo1.png" alt="Bloom Logo" class="logo-img">
+                <h1>Bloom</h1>
+                <span>From Crampy to Happy, We've Got You Covered.</span>
+            </div>
+            <div class="nav-links">
+                <a href="#about-section">About Us</a>
+                <a href="#contact-section">Contact</a>
+            
+            
+                <div class="profile-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#8C527B" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="username-display">
+            <h1>Welcome, {{ user_name }}!</h1>
+        </div>
+        
+        <div class="content">
+            <img src="static/Images/meditation-figure.png" alt="Woman meditating" class="meditating-figure">
+            
+            <div class="menu-items">
+                <a href="/chatbot" class="menu-link">
+                    <div class="menu-item mental-health">
+                        <div class="menu-icon">
+                            <svg class="mental-health-icon" viewBox="0 0 24 24" fill="#4E8B55">
+                                <path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z"/>
+                                <g transform="translate(6.5,6) scale(0.5)">
+                                    <path fill="#E8F5E9" d="M11,11v-6h2v6h6v2h-6v6h-2v-6h-6v-2h6Z"/>
+                                </g>
+                            </svg>
+                        </div>
+                        <p>Mental Health Support</p>
+                        <p class="item-description">Access tools and resources designed to support emotional well-being during your menstrual cycle, helping you manage mood swings.</p>
+                    </div>
+                </a>
+
+                <a href="{{ url_for('period_tracker') }}">            
+                <div class="menu-item period-tracker">
+                    <div class="menu-icon">
+                        <svg class="period-icon" viewBox="0 0 24 24" fill="#8C527B">
+                            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8"/>
+                        </svg>
+                    </div>
+                    <p>Period Tracker</p>
+                    <p class="item-description">Track your menstrual cycle effortlessly and predict upcoming periods with accuracy to stay prepared and manage your health effectively.</p>
+                </div>
+            </a>
+                
+            <a href="/consultation" class="menu-link">
+                <div class="menu-item consultations">
+                    <div class="menu-icon">
+                        <svg class="consultations-icon" viewBox="0 0 24 24" fill="#6B8DC1">
+                            <path d="M19,8C19.56,8 20,8.43 20,9A1,1 0 0,1 19,10C18.43,10 18,9.55 18,9C18,8.43 18.43,8 19,8M2,2V11C2,13.96 4.19,16.5 7.14,16.91C7.76,19.92 10.42,22 13.5,22A6.5,6.5 0 0,0 20,15.5V11.81C21.16,11.39 22,10.29 22,9C22,7.34 20.66,6 19,6C17.34,6 16,7.34 16,9C16,10.29 16.84,11.4 18,11.81V15.41C18,17.91 16,19.91 13.5,19.91C11.5,19.91 9.82,18.7 9.22,16.9C12,16.3 14,13.8 14,11V2H10V5H12V11A4,4 0 0,1 8,15A4,4 0 0,1 4,11V5H6V2H2Z"/>
+                        </svg>
+                    </div>
+                    <p>Get Consultations</p>
+                    <p class="item-description">Connect with certified healthcare professionals to receive personalized advice, address concerns, and improve your overall menstrual health and well-being.</p>
+                </div>
+            </a>
+                
+            <a href="/nutrition" class="menu-link">
+                <div class="menu-item nutrition-right">
+                    <div class="menu-icon">
+                        <svg class="nutrition-icon" viewBox="0 0 24 24" fill="#5A8E83">
+                            <path d="M22,18C22,20.2 20.2,22 18,22H6C3.8,22 2,20.2 2,18V6C2,3.8 3.8,2 6,2H18C20.2,2 22,3.8 22,6V18Z" fill="#FFB39D" />
+                            <path d="M19,15H15A3,3 0 0,1 12,12A3,3 0 0,1 15,9H19M17,12H21V15H22V12H23V9H22V6H19V7H17V6H15V7A3,3 0 0,0 12,10A3,3 0 0,0 15,13H17V12M17,10V11H15A1,1 0 0,1 14,10A1,1 0 0,1 15,9H17V10M7,5H9A2,2 0 0,1 11,7V17A2,2 0 0,1 9,19H7A2,2 0 0,1 5,17V7A2,2 0 0,1 7,5M7,7V17H9V7H7Z" fill="#5A8E83" />
+                            <circle cx="14" cy="12" r="2" fill="#FFFFFF" />
+                        </svg>
+                    </div>
+                    <p>Nutrition</p>
+                    <p class="item-description">Get tailored dietary tips to reduce period discomfort, boost energy levels, and support overall well-being through balanced nutrition and hydration.</p>
+                </div>
+            </a>
+
+            <a href="/mood" class="menu-link">        
+                <div class="menu-item nutrition-left">
+                    <div class="menu-icon">
+                        <svg class="mood-tracking-icon" viewBox="0 0 24 24" fill="none" aria-label="Mood tracking icon showing a heart with a pulse line inside">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#FFB6C1"/>
+                            <polyline points="7 13 10 16 14 10 17 14" stroke="white" stroke-width="2" fill="none"/>
+                        </svg>                                   
+                    </div>
+                    <p>Mood Tracking</p>
+                    <p class="item-description">Track your mood patterns and sync them with your menstrual cycle to understand emotional shifts and improve overall well-being.</p>
+                </div>
+            </a>
+
+            <a href="/yoga" class="menu-link">               
+                <div class="menu-item yoga">
+                    <div class="menu-icon">
+                        <svg class="yoga-icon" viewBox="0 0 24 24" fill="#4C917D">
+                            <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6M12,8A4,4 0 0,0 8,12A4,4 0 0,0 12,16A4,4 0 0,0 16,12A4,4 0 0,0 12,8Z"/>
+                            <circle cx="12" cy="12" r="2" fill="#FFFFFF" />
+                        </svg>
+                    </div>
+                    <p>Yoga & Exercise</p>
+                    <p class="item-description">Explore gentle movements and yoga poses that help relieve period discomfort, reduce cramps, and promote relaxation during your cycle.</p>
+                </div>
+            </div>
+        </a>
+
+            
+            
+            </body>
+            </html>
+
+

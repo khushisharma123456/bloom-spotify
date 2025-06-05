@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PCOS Screening Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container my-5">
+    <h2 class="mb-4 text-center">PCOS Health & Menstrual Screening</h2>
+    <form method="POST" action="{{ url_for('survey') }}">
+
+
+        <!-- Q1: Age -->
+        <div class="mb-4">
+            <label for="q1" class="form-label"><strong>1. What is your age?</strong></label>
+            <input type="number" class="form-control" id="q1" name="q1" required min="10" max="60">
+        </div>
+
+        <div class="mb-4">
+    <label for="q2" class="form-label"><strong>2. When was your last period?</strong></label>
+    <input type="date" class="form-control" id="q2" name="q2" required>
+</div>
+
+        <!-- Q2: Period Length -->
+        <div class="mb-4">
+            <label for="q2" class="form-label"><strong>3. How long does your period usually last?</strong></label>
+            <select class="form-select" id="q2" name="q2" required>
+                <option value="" disabled selected>Select duration</option>
+                <option value="Less than 2 days">Less than 2 days</option>
+                <option value="2-4 days">2-4 days</option>
+                <option value="5-7 days">5-7 days</option>
+                <option value="More than 7 days">More than 7 days</option>
+            </select>
+        </div>
+
+        <!-- Q3: Cycle Length -->
+        <div class="mb-4">
+            <label for="q3" class="form-label"><strong>4. How long is your menstrual cycle (from one period to the next)?</strong></label>
+            <select class="form-select" id="q3" name="q3" required>
+                <option value="" disabled selected>Select cycle length</option>
+                <option value="Less than 21 days">Less than 21 days</option>
+                <option value="21–35 days">21–35 days (Typical)</option>
+                <option value="More than 35 days">More than 35 days</option>
+                <option value="Highly irregular">Highly irregular</option>
+            </select>
+        </div>
+
+        <!-- Q4: Period Regularity -->
+        <div class="mb-4">
+            <label class="form-label"><strong>5. How regular are your periods?</strong></label>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q4" value="Regular" required><label class="form-check-label">Regular (every 25–35 days)</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q4" value="Irregular"><label class="form-check-label">Irregular (too early or too late)</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q4" value="Missed"><label class="form-check-label">Missed periods for months</label></div>
+        </div>
+
+        <!-- Q5: Hirsutism -->
+        <div class="mb-4">
+            <label class="form-label"><strong>6. Have you noticed excessive facial/body hair growth (chin, chest, stomach)?</strong></label>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q5" value="Yes" required><label class="form-check-label">Yes</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q5" value="No"><label class="form-check-label">No</label></div>
+        </div>
+
+        <!-- Q6: Acne -->
+        <div class="mb-4">
+            <label class="form-label"><strong>7. Do you have frequent or severe acne (especially on jawline/chin)?</strong></label>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q6" value="Yes" required><label class="form-check-label">Yes</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q6" value="No"><label class="form-check-label">No</label></div>
+        </div>
+
+        <!-- Q7: Hair Thinning -->
+        <div class="mb-4">
+            <label class="form-label"><strong>8. Have you noticed hair thinning or bald patches on your scalp?</strong></label>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q7" value="Yes" required><label class="form-check-label">Yes</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q7" value="No"><label class="form-check-label">No</label></div>
+        </div>
+
+        <!-- Q8: Weight Gain -->
+        <div class="mb-4">
+            <label class="form-label"><strong>9. Have you experienced unexplained weight gain, especially around your belly?</strong></label>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q8" value="Yes" required><label class="form-check-label">Yes</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q8" value="No"><label class="form-check-label">No</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q8" value="Stable Weight"><label class="form-check-label">I’ve always had a stable weight</label></div>
+        </div>
+
+        <!-- Q9: Fatigue & Sugar Craving -->
+        <div class="mb-4">
+            <label class="form-label"><strong>10. Do you often feel extremely tired after eating or crave sugar a lot?</strong></label>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q9" value="Yes" required><label class="form-check-label">Yes</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q9" value="No"><label class="form-check-label">No</label></div>
+        </div>
+
+        <!-- Q10: Family History -->
+        <div class="mb-4">
+            <label class="form-label"><strong>11. Does anyone in your family (mother, sister, aunt) have PCOS or diabetes?</strong></label>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q10" value="Yes" required><label class="form-check-label">Yes</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q10" value="No"><label class="form-check-label">No</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q10" value="Not Sure"><label class="form-check-label">Not Sure</label></div>
+        </div>
+
+        <!-- Q11: Infertility -->
+        <div class="mb-4">
+            <label class="form-label"><strong>12. Have you tried to conceive for over a year without success?</strong></label>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q11" value="Yes"><label class="form-check-label">Yes</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q11" value="No"><label class="form-check-label">No</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q11" value="Not trying yet"><label class="form-check-label">Not trying yet</label></div>
+        </div>
+
+        <!-- Q12: Mood/Anxiety -->
+        <div class="mb-4">
+            <label class="form-label"><strong>13. How often do you feel unusually anxious, moody, or emotionally low?</strong></label>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q12" value="Frequently" required><label class="form-check-label">Frequently</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q12" value="Occasionally"><label class="form-check-label">Occasionally</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q12" value="Rarely"><label class="form-check-label">Rarely</label></div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Submit</button>
+
+    </form>
+</div>
+</body>
+</html>

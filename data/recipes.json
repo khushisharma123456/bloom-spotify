@@ -1,0 +1,445 @@
+{
+  "recipes": [
+    {
+      "title": "Ajwain Water",
+      "category": "Bloating",
+      "description": "Relieves bloating by improving digestion and reducing gas.",
+      "calories": "N/A",
+      "time": "5 min",
+      "tags": ["Herbal"],
+      "image": "Images/ajwain-water.png"
+    },
+    {
+      "title": "Fennel Tea",
+      "category": "Bloating",
+      "description": "Reduces bloating and calms the digestive tract.",
+      "calories": "N/A",
+      "time": "10 min",
+      "tags": ["Caffeine-free"],
+      "image": "Images/fennel-tea.png"
+    },
+    {
+      "title": "Triphala Powder",
+      "category": "Bloating",
+      "description": "Supports digestion and relieves chronic bloating.",
+      "calories": "N/A",
+      "time": "2 min",
+      "tags": ["Detox"],
+      "image": "Images/triphala.png"
+    },
+    {
+      "title": "Ginger Elixir",
+      "category": "Bloating",
+      "description": "Boosts metabolism and alleviates gas and bloating.",
+      "calories": "N/A",
+      "time": "7 min",
+      "tags": ["Warming"],
+      "image": "Images/ginger.png"
+    },
+    {
+      "title": "CCF Tea",
+      "category": "Bloating",
+      "description": "A blend of cumin, coriander, and fennel seeds to ease digestion and bloating.",
+      "calories": "N/A",
+      "time": "10 min",
+      "tags": ["Detoxifying"],
+      "image": "Images/cumin-coriander-fennel.png"
+    },
+    {
+      "title": "Hing (Asafoetida) Water",
+      "category": "Bloating",
+      "description": "Powerful remedy for bloating and abdominal discomfort.",
+      "calories": "N/A",
+      "time": "3 min",
+      "tags": ["Anti-gas"],
+      "image": "Images/hing-water.png"
+    },
+    {
+      "title": "Warm Lemon Honey Water",
+      "category": "Pain Relief and Bloating",
+      "description": "Stimulates digestion and helps flush out excess gas.",
+      "calories": "N/A",
+      "time": "5 min",
+      "tags": ["Refreshing"],
+      "image": "Images/lemon-honey.png"
+    },
+    {
+      "title": "Shatavari Powder",
+      "category": "Hormone Balance",
+      "description": "Balances estrogen and supports reproductive health.",
+      "calories": "N/A",
+      "time": "5 min",
+      "tags": ["Rejuvenating"],
+      "image": "Images/shatavari.png"
+    },
+    {
+      "title": "Ashwagandha Tea",
+      "category": "Hormone Balance",
+      "description": "Helps regulate cortisol and thyroid hormone levels.",
+      "calories": "N/A",
+      "time": "5 min",
+      "tags": ["Stress-free"],
+      "image": "Images/ashwagandha-hormone.png"
+    },
+    {
+      "title": "Flaxseed Water",
+      "category": "Hormone Balance",
+      "description": "Supports hormonal balance and menstrual regularity.",
+      "calories": "N/A",
+      "time": "2 min",
+      "tags": ["Balancing"],
+      "image": "Images/flaxseeds.png"
+    },
+    {
+      "title": "Aloe Vera Juice",
+      "category": "Hormone Balance and Pain Relief",
+      "description": "Maintains hormonal levels and soothes PCOS symptoms.",
+      "calories": "N/A",
+      "time": "3 min",
+      "tags": ["Detox"],
+      "image": "Images/aloevera-juice.png"
+    },
+    {
+      "title": "Sesame Ladoo",
+      "category": "Hormone Balance",
+      "description": "Rich in zinc and calcium, supports female hormones.",
+      "calories": "N/A",
+      "time": "20 min",
+      "tags": ["Winter Tonic"],
+      "image": "Images/sesame-ladoo.png"
+    },
+    {
+      "title": "Methi Seed Water",
+      "category": "Hormone Balance",
+      "description": "Improves insulin sensitivity and hormonal balance.",
+      "calories": "N/A",
+      "time": "4 min",
+      "tags": ["Detox"],
+      "image": "Images/methi-seeds.png"
+    },
+    {
+      "title": "Hormone-Balancing Kitchari",
+      "category": "Hormone Balance and Energy Boost",
+      "description": "Easy-to-digest meal with balancing spices for hormonal support.",
+      "calories": "N/A",
+      "time": "30 min",
+      "tags": ["Light Meal"],
+      "image": "Images/hormone-kitchari.png"
+    },
+    {
+      "title": "Shatavari Elixir",
+      "category": "Hormonal Balance and Pain Relief",
+      "description": "Balances estrogen levels and eases PMS or menopausal discomfort.",
+      "calories": "N/A",
+      "time": "5 min",
+      "tags": ["Female Health"],
+      "image": "Images/shatavari-elixir.png"
+    },
+    {
+      "title": "Chasteberry Infusion",
+      "category": "Pain Relief and Hormone Balance",
+      "description": "Promotes progesterone production and eases cycle-related pain.",
+      "calories": "N/A",
+      "time": "7 min",
+      "tags": ["Herbal"],
+      "image": "Images/chasteberry-tea.png"
+    },
+    {
+      "title": "Evening Primrose Oil",
+      "category": "Pain Relief and Hormone Balance",
+      "description": "Supports hormonal health and reduces breast tenderness and cramps.",
+      "calories": "N/A",
+      "time": "Daily",
+      "tags": ["Supplement"],
+      "image": "Images/evening-primrose.png"
+    },
+    {
+      "title": "Seed Cycling Mix",
+      "category": "Hormone Balance",
+      "description": "Rotating flax, pumpkin, sesame & sunflower seeds to regulate hormones.",
+      "calories": "N/A",
+      "time": "2 min",
+      "tags": ["Nutrient-Rich"],
+      "image": "Images/seed-cycling.png"
+    },
+    {
+      "title": "Chyawanprash Spoon",
+      "category": "Immunity and Energy Boost",
+      "description": "Classic herbal jam rich in amla and 40+ herbs to enhance energy and immunity.",
+      "calories": "N/A",
+      "time": "1 min",
+      "tags": ["Daily Tonic"],
+      "image": "Images/chyawanprash.png"
+    },
+    {
+      "title": "Dates & Almond Shake",
+      "category": "Iron-rich and Energy Boost",
+      "description": "Blended dates, almonds, and warm milk for a quick energy and strength boost.",
+      "calories": "N/A",
+      "time": "10 min",
+      "tags": ["Rejuvenating"],
+      "image": "Images/dates-almond-shake.png"
+    },
+    {
+      "title": "Moringa Tea",
+      "category": "Energy Boost",
+      "description": "Rich in iron and vitamin C, moringa helps fight fatigue and restores vitality.",
+      "calories": "N/A",
+      "time": "7 min",
+      "tags": ["Antioxidant"],
+      "image": "Images/moringa-tea.png"
+    },
+    {
+      "title": "Ashwagandha Latte",
+      "category": "Energy Boost",
+      "description": "Balances stress hormones and supports sustained energy throughout the day.",
+      "calories": "N/A",
+      "time": "8 min",
+      "tags": ["Calm Energy"],
+      "image": "Images/ashwagandha-latte.png"
+    },
+    {
+      "title": "Beetroot & Carrot Soup",
+      "category": "Digestive",
+      "description": "Detoxifying soup rich in antioxidants",
+      "calories": "180 cal",
+      "time": "35 min",
+      "tags": [],
+      "image": "Images/4h.png"
+    },
+    {
+      "title": "Flaxseed & Banana Smoothie",
+      "category": "Hormone Balance",
+      "description": "Omega-3 rich smoothie for hormonal health",
+      "calories": "250 cal",
+      "time": "10 min",
+      "tags": [],
+      "image": "Images/5h.png"
+    },
+    {
+      "title": "Turmeric Golden Milk",
+      "category": "Anti-inflammatory",
+      "description": "Healing drink with turmeric and almond milk",
+      "calories": "150 cal",
+      "time": "10 min",
+      "tags": [],
+      "image": "Images/7h.png"
+    },
+    {
+      "title": "Dates & Nuts Ladoo",
+      "category": "Energy Boost",
+      "description": "Natural sweet energy balls for fatigue",
+      "calories": "200 cal",
+      "time": "20 min",
+      "tags": [],
+      "image": "Images/9h.png"
+    },
+    {
+      "title": "Coconut Water & Chia Fresca",
+      "category": "Hydration",
+      "description": "Electrolyte-rich hydrating drink",
+      "calories": "120 cal",
+      "time": "5 min",
+      "tags": [],
+      "image": "Images/10h.png"
+    },
+    {
+      "title": "Fermented Rice Kanji",
+      "category": "Gut Health",
+      "description": "Probiotic-rich fermented rice drink",
+      "calories": "160 cal",
+      "time": "12 hours",
+      "tags": [],
+      "image": "Images/11h.png"
+    },
+    {
+      "title": "Cumin & Coriander Tea",
+      "category": "Bloating",
+      "description": "Digestive tea to reduce bloating",
+      "calories": "50 cal",
+      "time": "10 min",
+      "tags": [],
+      "image": "Images/12h.png"
+    },
+    {
+      "title": "Dark Chocolate Oats",
+      "category": "Mood Boost",
+      "description": "Magnesium-rich breakfast for mood swings",
+      "calories": "280 cal",
+      "time": "15 min",
+      "tags": [],
+      "image": "Images/13h.png"
+    },
+    {
+      "title": "Broccoli & Almond Stir-fry",
+      "category": "Hormone Balance",
+      "description": "Cruciferous veggies for estrogen balance",
+      "calories": "240 cal",
+      "time": "20 min",
+      "tags": [],
+      "image": "Images/14h.png"
+    },
+    {
+      "title": "Ginger & Jaggery Tea",
+      "category": "Pain Relief",
+      "description": "Anti-inflammatory drink for cramps",
+      "calories": "80 cal",
+      "time": "12 min",
+      "tags": [],
+      "image": "Images/15h.png"
+    },
+    {
+      "title": "Methi Seed Water",
+      "category": "Hormonal Balance",
+      "description": "Soaked fenugreek seeds regulate blood sugar and support hormonal balance.",
+      "calories": "N/A",
+      "time": "Soak Overnight",
+      "tags": ["Detox"],
+      "image": "Images/methi-seed-water.png"
+    },
+    {
+      "title": "Ashwagandha with Warm Milk",
+      "category": "Energy Boost",
+      "description": "Reduces cortisol and boosts stamina, great for stress and hormone support.",
+      "calories": "N/A",
+      "time": "5 min",
+      "tags": ["Bedtime"],
+      "image": "Images/ashwagandha-milk.png"
+    },
+    {
+      "title": "Sesame Oil Massage",
+      "category": "Therapeutic",
+      "description": "Improves circulation, calms the nervous system, and balances Vata dosha.",
+      "calories": "N/A",
+      "time": "15 min",
+      "tags": ["Abhyanga"],
+      "image": "Images/sesame-oil-massage.png"
+    },
+    {
+      "title": "Aloe Vera & Kesar Drink",
+      "category": "Cooling",
+      "description": "Improves skin, hormones, and liver health. Cooling and rejuvenating.",
+      "calories": "N/A",
+      "time": "5 min",
+      "tags": ["Refreshing"],
+      "image": "Images/aloe-kesar-drink.png"
+    },
+    {
+      "title": "Cumin Seed (Jeera) Tea",
+      "category": "Digestive",
+      "description": "Boosts digestion and energy; supports weight loss and hormone balance.",
+      "calories": "N/A",
+      "time": "10 min",
+      "tags": ["Detox"],
+      "image": "Images/jeera-tea.png"
+    },
+    {
+      "title": "Tulsi & Cinnamon Tea",
+      "category": "Immuno-Modulating",
+      "description": "Enhances metabolism, supports adrenal glands and menstrual cycles.",
+      "calories": "N/A",
+      "time": "7 min",
+      "tags": ["Balancing"],
+      "image": "Images/tulsi-cinnamon-tea.png"
+    },
+    {
+      "title": "Quinoa Upma",
+      "category": "Iron-rich",
+      "description": "High-protein breakfast with quinoa and vegetables",
+      "calories": "320 cal",
+      "time": "25 min",
+      "tags": [],
+      "image": "Images/1h.png"
+    },
+    {
+      "title": "Palak Tofu Curry",
+      "category": "Iron Boost",
+      "description": "Iron-rich spinach with protein-packed tofu",
+      "calories": "310 cal",
+      "time": "25 min",
+      "tags": [],
+      "image": "Images/6h.png"
+    },
+    {
+      "title": "Spinach & Paneer Paratha",
+      "category": "High Calcium",
+      "description": "Iron and calcium rich stuffed flatbread",
+      "calories": "280 cal",
+      "time": "30 min",
+      "tags": [],
+      "image": "Images/2h.png"
+    },
+    {
+      "title": "Moong Dal Chilla",
+      "category": "Energy Boost",
+      "description": "Protein-packed lentil pancakes with spices",
+      "calories": "220 cal",
+      "time": "20 min",
+      "tags": [],
+      "image": "Images/3h.png"
+    },
+    {
+      "title": "Chana Chaat Salad",
+      "category": "Protein Rich",
+      "description": "Protein-packed chickpea salad with veggies",
+      "calories": "290 cal",
+      "time": "15 min",
+      "tags": [],
+      "image": "Images/8h.png"
+    },
+    {
+      "title": "Sprouted Moong Salad",
+      "category": "Protein Packed",
+      "description": "High-protein sprouted lentils with veggies",
+      "calories": "210 cal",
+      "time": "15 min",
+      "tags": [],
+      "image": "Images/16h.png"
+    },
+    {
+      "title": "Iron-Rich Palak Paratha",
+      "category": "Menstrual • Lunch",
+      "description": "Iron and calcium rich stuffed flatbread, ideal for lunch during the menstrual phase.",
+      "calories": "280 cal",
+      "time": "30 min",
+      "tags": [],
+      "image": "Images/3h.png"
+    },
+    {
+      "title": "Watermelon Seed Energy Bites",
+      "category": "Menstrual • Snacks",
+      "description": "Iron-rich, crunchy bites made with roasted watermelon seeds, dates, and coconut. Great for snacking during the menstrual phase.",
+      "calories": "120 cal",
+      "time": "15 min",
+      "tags": [],
+      "image": "Images/watermelon-seed-bites.png"
+    },
+    {
+      "title": "Chia Yogurt Parfait",
+      "category": "Ovulation • Snacks",
+      "description": "Layered parfait with chia pudding, yogurt, and berries. Omega-3 boost for ovulation snacks.",
+      "calories": "180 cal",
+      "time": "10 min",
+      "tags": [],
+      "image": "Images/chia-yogurt-parfait.png"
+    },
+    {
+      "title": "Chia Cocoa Bliss Balls",
+      "category": "Luteal • Snacks",
+      "description": "Chocolatey snack balls with chia seeds, dates, and nuts. Satisfies cravings and supports mood in the luteal phase.",
+      "calories": "140 cal",
+      "time": "12 min",
+      "tags": [],
+      "image": "Images/chia-cocoa-balls.png"
+    },
+    {
+      "title": "Watermelon Chia Popsicles",
+      "category": "Follicular • Snacks",
+      "description": "Refreshing popsicles made with watermelon, chia seeds, and mint. Perfect for follicular phase snacking.",
+      "calories": "90 cal",
+      "time": "5 min + freeze",
+      "tags": [],
+      "image": "Images/watermelon-chia-pops.png"
+    }
+  ]
+}

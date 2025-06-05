@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloom - Yoga for Menstrual Wellness</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --lavender: #e6e6fa;
+            --peach: #ffdab9;
+            --teal: #afeeee;
+            --soft-pink: #ffb6c1;
+            --white: #fff;
+            --light-gray: #f5f5f5;
+            --dark-gray: #333;
+            --rounded: 12px;
+            --shadow: 0 4px 12px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        body {
+            display: flex;
+            background-color: #fef6f9;
+            color: #333;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            background: linear-gradient(135deg, rgba(255,182,193,0.9) 0%, rgba(230,230,250,0.9) 100%);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow);
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark-gray);
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .nav-menu {
+            flex-grow: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: var(--rounded);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255,255,255,0.5);
+        }
+
+        .nav-item.active {
+            background-color: var(--white);
+            font-weight: 600;
+        }
+
+        .nav-item i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-top: 1px solid rgba(255,255,255,0.5);
+            margin-top: auto;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--white);
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        section {
+            margin-bottom: 40px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #5a4a6a;
+            font-weight: 600;
+        }
+
+        /* Duration Selector */
+        .duration-selector {
+            margin-bottom: 30px;
+        }
+
+        .duration-options {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .duration-options::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .duration-options::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.1);
+            border-radius: 3px;
+        }
+
+        .duration-options button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--rounded);
+            background-color: var(--light-gray);
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+        .duration-options button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .duration-options button.active {
+            background-color: var(--soft-pink);
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Routine Cards */
+        .routine-cards {
+            margin-bottom: 40px;
+        }
+
+        .card-container {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding-bottom: 20px;
+        }
+
+        .routine-card {
+            min-width: 280px;
+            height: 180px;
+            border-radius: var(--rounded);
+            padding: 20px;
+            display: flex;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .routine-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .lavender-theme {
+            background: linear-gradient(135deg, var(--lavender) 0%, #d8bfd8 100%);
+        }
+
+        .peach-theme {
+            background: linear-gradient(135deg, var(--peach) 0%, #ffb347 100%);
+        }
+
+        .teal-theme {
+            background: linear-gradient(135deg, var(--teal) 0%, #7fffd4 100%);
+        }
+
+        .card-content {
+            z-index: 2;
+            width: 60%;
+        }
+
+        .routine-card h3 {
+            margin-bottom: 10px;
+            color: #5a4a6a;
+        }
+
+        .routine-card p {
+            font-size: 14px;
+            margin-bottom: 15px;
+            color: #5a4a6a;
+        }
+
+        .start-button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            background-color: rgba(255,255,255,0.8);
+            color: #5a4a6a;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .start-button:hover {
+            background-color: white;
+            transform: scale(1.05);
+        }
+
+        .pose-icon {
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            font-size: 60px;
+            opacity: 0.8;
+        }
+
+        /* Custom Routine Section */
+        .custom-routine {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .add-button {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: none;
+            background-color: var(--soft-pink);
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .add-button:hover {
+            transform: scale(1.1);
+            background-color: #ff9aae;
+        }
+
+        /* Pose Library */
+        .search-bar {
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 1px solid #ddd;
+            border-radius: var(--rounded);
+            font-size: 16px;
+            background-color: rgba(255,255,255,0.8);
+            transition: var(--transition);
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--soft-pink);
+            box-shadow: 0 0 0 3px rgba(255,182,193,0.3);
+        }
+
+        .pose-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .pose-card {
+            background-color: white;
+            border-radius: var(--rounded);
+            padding: 15px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .pose-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .pose-card h4 {
+            margin-bottom: 10px;
+            color: #5a4a6a;
+        }
+
+        .pose-icon-small {
+            font-size: 40px;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .pose-tags {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            background-color: var(--light-gray);
+        }
+
+        .meditative-tag {
+            background-color: var(--lavender);
+        }
+
+        .relief-tag {
+            background-color: var(--peach);
+        }
+
+        .mix-tag {
+            background-color: var(--teal);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            width: 90%;
+            max-width: 600px;
+            border-radius: var(--rounded);
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #888;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--rounded);
+            font-size: 16px;
+        }
+
+        .pose-selector {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: var(--rounded);
+            padding: 10px;
+        }
+
+        .pose-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .pose-item:last-child {
+            border-bottom: none;
+        }
+
+        .pose-item input {
+            margin-right: 10px;
+        }
+
+        .pose-item-info {
+            flex-grow: 1;
+        }
+
+        .pose-item-duration {
+            width: 60px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .tag-selector {
+            display: flex;
+            gap: 10px;
+        }
+
+        .tag-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 20px;
+            background-color: var(--light-gray);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .tag-btn.active {
+            background-color: var(--soft-pink);
+            color: white;
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: var(--rounded);
+            background-color: var(--soft-pink);
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .save-btn:hover {
+            background-color: #ff9aae;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+                padding: 10px;
+            }
+            .nav-item span {
+                display: none;
+            }
+            .nav-item i {
+                margin-right: 0;
+                font-size: 20px;
+            }
+            .user-profile .username {
+                display: none;
+            }
+            .main-content {
+                margin-left: 70px;
+            }
+            .card-container {
+                flex-direction: column;
+            }
+            .routine-card {
+                width: 100%;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Fixed Sidebar -->
+    <div class="sidebar">
+        <div class="logo">Bloom</div>
+        <div class="nav-menu">
+            <div class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-smile"></i>
+                <span>Mood Tracker</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-utensils"></i>
+                <span>Nutrition</span>
+            </div>
+            <div class="nav-item active">
+                <i class="fas fa-spa"></i>
+                <span>Yoga</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-lightbulb"></i>
+                <span>Tips</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-book-open"></i>
+                <span>Recipes</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </div>
+        </div>
+        <div class="user-profile">
+            <div class="avatar">JD</div>
+            <span class="username">Jane Doe</span>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Session Duration Selector -->
+        <section class="duration-selector">
+            <h2>Choose Your Yoga Duration</h2>
+            <div class="duration-options">
+                <button class="active">10 min</button>
+                <button>15 min</button>
+                <button>20 min</button>
+                <button>25 min</button>
+                <button>30 min</button>
+            </div>
+        </section>
+        
+        <!-- Routine Cards -->
+        <section class="routine-cards">
+            <h2>Featured Routines</h2>
+            <div class="card-container">
+                <!-- Card 1 -->
+                <div class="routine-card lavender-theme">
+                    <div class="card-content">
+                        <h3>Meditative Routine</h3>
+                        <p>Gentle poses to calm the mind and ease cramps</p>
+                        <button class="start-button">Start</button>
+                    </div>
+                    <div class="pose-icon">🧘‍♀️</div>
+                </div>
+                
+                <!-- Card 2 -->
+                <div class="routine-card peach-theme">
+                    <div class="card-content">
+                        <h3>Relax Routine</h3>
+                        <p>Stretches to release tension and improve circulation</p>
+                        <button class="start-button">Start</button>
+                    </div>
+                    <div class="pose-icon">🙆‍♀️</div>
+                </div>
+                
+                <!-- Card 3 -->
+                <div class="routine-card teal-theme">
+                    <div class="card-content">
+                        <h3>Mixed Routine</h3>
+                        <p>Balance of strength and relaxation for overall wellness</p>
+                        <button class="start-button">Start</button>
+                    </div>
+                    <div class="pose-icon">💪</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Custom Routine Section -->
+        <section class="custom-routine">
+            <h2>Create Your Own Routine</h2>
+            <button class="add-button" id="create-routine-btn">+</button>
+        </section>
+        
+        <!-- Yoga Exercise Library -->
+        <section class="pose-library">
+            <h2>Explore Yoga Poses</h2>
+            <div class="search-bar">
+                <input type="text" placeholder="Search for an asana...">
+            </div>
+            <div class="pose-grid" id="pose-grid">
+                <!-- Pose cards will be populated by JavaScript -->
+            </div>
+        </section>
+    </div>
+
+    <!-- Create Routine Modal -->
+    <div class="modal" id="routine-modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Create Your Routine</h2>
+            
+            <div class="form-group">
+                <label>Routine Name</label>
+                <input type="text" id="routine-name" placeholder="My Custom Routine">
+            </div>
+            
+            <div class="form-group">
+                <label>Duration</label>
+                <div class="duration-options">
+                    <button class="duration-option">10 min</button>
+                    <button class="duration-option">15 min</button>
+                    <button class="duration-option active">20 min</button>
+                    <button class="duration-option">25 min</button>
+                    <button class="duration-option">30 min</button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Select Poses</label>
+                <div class="pose-selector" id="pose-selector">
+                    <!-- Pose items will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Tags</label>
+                <div class="tag-selector">
+                    <button class="tag-btn">Meditative</button>
+                    <button class="tag-btn">Relief</button>
+                    <button class="tag-btn">Mix</button>
+                </div>
+            </div>
+            
+            <button class="save-btn" id="save-routine-btn">Save Routine</button>
+        </div>
+    </div>
+
+    <script>
+        // Sample data for yoga poses
+        const yogaPoses = [
+            { name: "Sukhasana (Easy Pose)", icon: "🧘‍♀️", tags: ["Meditative"], description: "Calms the mind and relieves stress" },
+            { name: "Balasana (Child's Pose)", icon: "🙇‍♀️", tags: ["Relief"], description: "Gently stretches the hips and lower back" },
+            { name: "Vrikshasana (Tree Pose)", icon: "🌳", tags: ["Mix"], description: "Improves balance and focus" },
+            { name: "Marjaryasana (Cat Pose)", icon: "🐱", tags: ["Relief"], description: "Stretches the back and relieves tension" },
+            { name: "Bitilasana (Cow Pose)", icon: "🐄", tags: ["Relief"], description: "Increases spinal flexibility" },
+            { name: "Adho Mukha Svanasana (Downward Dog)", icon: "🦮", tags: ["Mix"], description: "Strengthens and stretches the whole body" },
+            { name: "Bhujangasana (Cobra Pose)", icon: "🐍", tags: ["Relief"], description: "Stretches the abdomen and chest" },
+            { name: "Supta Baddha Konasana (Reclining Butterfly)", icon: "🦋", tags: ["Meditative", "Relief"], description: "Relaxes the hips and groin" },
+            { name: "Viparita Karani (Legs-Up-the-Wall)", icon: "🦵", tags: ["Meditative", "Relief"], description: "Relieves tired legs and improves circulation" },
+            { name: "Savasana (Corpse Pose)", icon: "😴", tags: ["Meditative"], description: "Deep relaxation for body and mind" }
+        ];
+
+        // DOM Elements
+        const poseGrid = document.getElementById('pose-grid');
+        const poseSelector = document.getElementById('pose-selector');
+        const createRoutineBtn = document.getElementById('create-routine-btn');
+        const routineModal = document.getElementById('routine-modal');
+        const closeBtn = document.querySelector('.close-btn');
+        const saveRoutineBtn = document.getElementById('save-routine-btn');
+        const durationOptions = document.querySelectorAll('.duration-options button');
+        const modalDurationOptions = document.querySelectorAll('.modal .duration-option');
+        const tagButtons = document.querySelectorAll('.tag-btn');
+
+        // Populate pose library
+        function populatePoseLibrary() {
+            poseGrid.innerHTML = '';
+            yogaPoses.forEach(pose => {
+                const poseCard = document.createElement('div');
+                poseCard.className = 'pose-card';
+                
+                const tagsHTML = pose.tags.map(tag => {
+                    const tagClass = tag.toLowerCase() + '-tag';
+                    return `<span class="tag ${tagClass}">${tag}</span>`;
+                }).join('');
+                
+                poseCard.innerHTML = `
+                    <h4>${pose.name}</h4>
+                    <div class="pose-icon-small">${pose.icon}</div>
+                    <div class="pose-tags">${tagsHTML}</div>
+                `;
+                poseGrid.appendChild(poseCard);
+            });
+        }
+
+        // Populate pose selector in modal
+        function populatePoseSelector() {
+            poseSelector.innerHTML = '';
+            yogaPoses.forEach(pose => {
+                const poseItem = document.createElement('div');
+                poseItem.className = 'pose-item';
+                
+                const tagsHTML = pose.tags.map(tag => {
+                    const tagClass = tag.toLowerCase() + '-tag';
+                    return `<span class="tag ${tagClass}">${tag}</span>`;
+                }).join(' ');
+                
+                poseItem.innerHTML = `
+                    <input type="checkbox" id="pose-${pose.name.replace(/\s+/g, '-').toLowerCase()}">
+                    <div class="pose-item-info">
+                        <label for="pose-${pose.name.replace(/\s+/g, '-').toLowerCase()}">${pose.name}</label>
+                        <div class="pose-tags">${tagsHTML}</div>
+                    </div>
+                    <select class="pose-item-duration">
+                        <option value="30">30s</option>
+                        <option value="60" selected>1m</option>
+                        <option value="90">1m 30s</option>
+                        <option value="120">2m</option>
+                    </select>
+                `;
+                poseSelector.appendChild(poseItem);
+            });
+        }
+
+        // Event Listeners
+        createRoutineBtn.addEventListener('click', () => {
+            routineModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        });
+
+        closeBtn.addEventListener('click', () => {
+            routineModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+
+        saveRoutineBtn.addEventListener('click', () => {
+            const routineName = document.getElementById('routine-name').value;
+            if (!routineName) {
+                alert('Please enter a routine name');
+                return;
+            }
+            
+            const selectedDuration = document.querySelector('.modal .duration-option.active').textContent;
+            const selectedPoses = [];
+            
+            document.querySelectorAll('.pose-item input:checked').forEach(checkbox => {
+                const poseName = checkbox.nextElementSibling.querySelector('label').textContent;
+                const duration = checkbox.parentElement.querySelector('.pose-item-duration').value;
+                selectedPoses.push({ name: poseName, duration: duration });
+            });
+            
+            if (selectedPoses.length === 0) {
+                alert('Please select at least one pose');
+                return;
+            }
+            
+            // Here you would typically save the routine to your backend
+            console.log('New Routine:', {
+                name: routineName,
+                duration: selectedDuration,
+                poses: selectedPoses
+            });
+            
+            alert(`Routine "${routineName}" saved successfully!`);
+            routineModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+
+        // Duration selection
+        durationOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                durationOptions.forEach(btn => btn.classList.remove('active'));
+                option.classList.add('active');
+            });
+        });
+
+        modalDurationOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                modalDurationOptions.forEach(btn => btn.classList.remove('active'));
+                option.classList.add('active');
+            });
+        });
+
+        // Tag selection
+        tagButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                button.classList.toggle('active');
+            });
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === routineModal) {
+                routineModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Initialize the page
+        populatePoseLibrary();
+        populatePoseSelector();
+    </script>
+</body>
+</html>

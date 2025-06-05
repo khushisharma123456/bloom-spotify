@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ remedy.name }} - Bloom</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/remedy.css') }}">
+</head>
+<body>
+    <div class="remedy-detail-container">
+        <button class="back-btn" onclick="window.history.back()">← Back</button>
+        
+        <img src="{{ remedy.image }}" alt="{{ remedy.name }}" class="remedy-image"
+             onerror="this.src='{{ url_for('static', filename='images/default-remedy.png') }}'">
+        
+        <div class="remedy-meta">
+            <h1>{{ remedy.name }}</h1>
+            <span class="remedy-badge">{{ remedy.badge }}</span>
+            <div class="remedy-time">⏱️ {{ remedy.time }}</div>
+            <div class="remedy-calories">🔥 {{ remedy.calories }}</div>
+        </div>
+
+        <p class="remedy-description">{{ remedy.description }}</p>
+
+        <div class="remedy-section">
+            <h2>Ingredients</h2>
+            <ul>
+                {% for ingredient in remedy.ingredients %}
+                <li>{{ ingredient }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="remedy-section">
+            <h2>Preparation Steps</h2>
+            <ol>
+                {% for step in remedy.steps %}
+                <li>{{ step }}</li>
+                {% endfor %}
+            </ol>
+        </div>
+
+        <div class="remedy-section">
+            <h2>Health Benefits</h2>
+            <ul>
+                {% for benefit in remedy.benefits %}
+                <li>{{ benefit }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

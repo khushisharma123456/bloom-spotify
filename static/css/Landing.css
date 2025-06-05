@@ -1,0 +1,362 @@
+/* Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #FCEFF4;
+    color: #333;
+    min-height: 100vh;
+}
+
+a {
+    text-decoration: none;
+    color: #8C527B;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #6B3D5E;
+}
+
+/* App Container */
+.app-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Background Elements */
+.background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../Images/Background.jpg'); /* Replace with your image path */
+    background-size: cover; /* Ensures the image covers the entire screen */
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+    z-index: -1; /* Places the background behind all content */
+}
+
+.item-description {
+    font-size: 0.65em;  /* Decreased from 0.8em */
+    color: #666;
+    margin-top: 0;
+    padding: 0 5px;
+    text-align: center;
+    font-weight: normal;
+    line-height: 1.2;
+}
+
+/* You may need to adjust the menu item container to accommodate the extra text */
+.menu-item {
+    padding-bottom: 10px;
+}
+
+.sparkles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(#FFF 1px, transparent 1px);
+    background-size: 30px 30px;
+    z-index: -9;
+    opacity: 0.4;
+}
+
+/* Header Styles */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    margin-bottom: 40px;
+}
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adds space between the logo and text */
+}
+
+.logo-img {
+    width: 50px;  /* Adjust width as needed */
+    height: auto; /* Maintain aspect ratio */
+}
+
+
+
+
+.logo h1 {
+    font-size: 2.5rem;
+    color: #8C527B;
+    margin-bottom: 5px;
+}
+
+.logo span {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav-links a {
+    padding: 8px 15px;
+    border-radius: 20px;
+    transition: background-color 0.3s ease;
+    font-weight: 500;
+}
+
+.nav-links a:hover {
+    background-color: rgba(140, 82, 123, 0.1);
+}
+
+.profile-icon {
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+/* Content Section */
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    position: relative;
+}
+
+.meditating-figure {
+    width: 300px;
+    max-width: 50%;
+    margin: 0 auto;
+    display: block;
+}
+
+/* Menu Items */
+.menu-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.menu-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    min-width: 150px;
+    min-height: 200px;
+    flex-grow: 1;
+}
+
+.menu-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.menu-icon {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.menu-item p {
+    font-weight: 500;
+    text-align: center;
+}
+
+/* Info Scroller Section */
+.info-scroller {
+    width: 100%;
+    max-height: 400px;
+    overflow-y: auto;
+    border-radius: 12px;
+    background-color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    margin-top: 20px;
+    padding: 0;
+    scroll-behavior: smooth;
+    /* Custom scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: #8C527B #F2D9E6;
+}
+
+/* Custom scrollbar for WebKit browsers */
+.info-scroller::-webkit-scrollbar {
+    width: 8px;
+}
+
+.info-scroller::-webkit-scrollbar-track {
+    background: #F2D9E6;
+    border-radius: 10px;
+}
+
+.info-scroller::-webkit-scrollbar-thumb {
+    background-color: #8C527B;
+    border-radius: 10px;
+}
+
+.info-section {
+    padding: 30px;
+    border-bottom: 1px solid #F2D9E6;
+}
+
+.info-section:last-child {
+    border-bottom: none;
+}
+
+.info-section h2 {
+    color: #8C527B;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.info-section h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background-color: #8C527B;
+}
+
+.info-content {
+    line-height: 1.6;
+}
+
+.info-content p {
+    margin-bottom: 15px;
+}
+
+.info-content p:last-child {
+    margin-bottom: 0;
+}
+
+/* Contact Section Specific Styles */
+.contact-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.contact-icon {
+    margin-right: 15px;
+    min-width: 24px;
+}
+
+.social-media {
+    margin-top: 30px;
+}
+
+.social-media h3 {
+    color: #8C527B;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.social-icons {
+    display: flex;
+    gap: 15px;
+}
+
+.social-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #F2D9E6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+.social-icon:hover {
+    background-color: #E8C5D7;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+    }
+    
+    .nav-links {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .meditating-figure {
+        width: 800px; /* Increased size */
+        height: auto; /* Maintain aspect ratio */
+        /* Other existing styles remain unchanged */
+    }
+
+    .meditating-figure {
+        width: 700px; /* Increase from previous value */
+        height: auto; /* Maintain aspect ratio */
+        position: absolute;
+        top: 100%; /* Center vertically */
+        left: 100%; /* Center horizontally */
+        transform: translate(-50%, -50%); /* Perfect centering */
+        z-index: 2; /* Ensure it appears above the background */
+        filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5)); /* Optional: add a subtle glow */
+    }
+    
+    
+    .menu-items {
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    }
+    
+    .info-section {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .menu-items {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+   
+    
+    .info-section h2 {
+        font-size: 1.5rem;
+    }
+}
+.username-display {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 10px;
+    color: #8C527B;
+}

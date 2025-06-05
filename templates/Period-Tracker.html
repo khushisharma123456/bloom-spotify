@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloom</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/period-traker.css') }}">
+</head>
+
+<body>
+    <div class="app-container">
+
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <img src="{{ url_for('static', filename='Images/logo .png') }}" alt="logo" class="logo">
+            </div>
+            <div class="left-header">
+                <p class="home">Home</p>
+                <img src="{{ url_for('static', filename='Images/profile.png') }}" alt="prf" class="profile">
+            </div>
+        </div>
+
+        <!-- Tracker Form -->
+        <!-- Tracker Form -->
+<form action="{{ url_for('period_tracker') }}" method="POST">
+    <div class="body">
+      <div class="rightbody">
+        <div class="up">
+          <p>Today is the second day of your cycle. Some people experience heavier bleeding and more intense cramps today. Try to stay hydrated and consider using a heating pad for relief.</p>
+        </div>
+        <div class="down">
+          <div class="down-down">
+            <div class="down-down-up">
+              
+              <!-- ✅ Add this Start Date Input -->
+              <div class="section">
+                <h3>When did your current period start?</h3>
+                <input type="date" name="start_date" required>
+              </div>
+  
+              <div class="section">
+                <h3>Flow</h3>
+                <div class="input-group">
+                  <input type="radio" name="flow" value="light" required> Light
+                  <input type="radio" name="flow" value="medium"> Medium
+                  <input type="radio" name="flow" value="heavy"> Heavy
+                </div>
+              </div>
+  
+              <div class="section">
+                <h3>Symptoms</h3>
+                <div class="input-group">
+                  <input type="checkbox" name="symptoms" value="cramps"> Cramps
+                  <input type="checkbox" name="symptoms" value="bloating"> Bloating
+                  <input type="checkbox" name="symptoms" value="headache"> Headache
+                  <input type="checkbox" name="symptoms" value="mood swings"> Mood Swings
+                </div>
+              </div>
+  
+              <div class="section">
+                <h3>Emotions</h3>
+                <div class="input-group">
+                  <input type="checkbox" name="emotions" value="happy"> Happy
+                  <input type="checkbox" name="emotions" value="sad"> Sad
+                  <input type="checkbox" name="emotions" value="anxious"> Anxious
+                  <input type="checkbox" name="emotions" value="irritable"> Irritable
+                </div>
+              </div>
+  
+              <div class="section">
+                <h3>Notes</h3>
+                <textarea name="notes" rows="4" cols="50"></textarea>
+              </div>
+  
+              <button type="submit" class="button">Submit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+  
+
+        <!-- Calendar -->
+        <div class="calendar">
+            <p class="cycle-calendar">Cycle Calendar</p>
+            <iframe src="https://calendar.google.com/calendar/embed?src=YOUR_CALENDAR_ID" style="border: 0"
+                width="800" height="600" frameborder="0" scrolling="no" class="google-cal">
+            </iframe>
+        </div>
+
+        <!-- Insights Section -->
+        <div class="graph-body">
+            <div class="info">
+                <!-- Static cycle tips -->
+                <p>1. <i>Your cycle has a lot of variations –</i> Tracking helps identify patterns.</p>
+                <p>2. <i>Stress may affect your cycle –</i> Try mindfulness or light exercise.</p>
+                <p>3. <i>Diet matters –</i> Ensure a balanced nutritional intake.</p>
+                <!-- ML Insight (optional) -->
+                {% if prediction %}
+                    <p style="color: #b23bb2;"><strong>ML Insight:</strong> Your next cycle is likely on <strong>{{ prediction }}</strong>.</p>
+                {% else %}
+                    <p style="color: #888;"><em>ML-based prediction will appear here once data is submitted.</em></p>
+                {% endif %}
+            </div>
+
+            <!-- Chart Container -->
+            <div class="chart-container">
+                <canvas id="myChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Next Cycle Prediction -->
+        <div class="next">
+            <p id="ptag1">Your next cycle is</p>
+            <p id="ptag2"><bpsk>expected on <b>{{ prediction if prediction else "..." }}</b></bpsk></p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var chartData = {{ data | tojson }};
+        if (chartData && chartData.dates) {
+            var ctx = document.getElementById('myChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartData.dates,
+                    datasets: [
+                        {
+                            label: 'Pain Level',
+                            data: chartData.pain_levels,
+                            borderColor: 'red',
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            fill: true,
+                            tension: 0.1
+                        },
+                        {
+                            label: 'Flow Level',
+                            data: chartData.flow_levels,
+                            borderColor: 'blue',
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            fill: true,
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { title: { display: true, text: 'Date' } },
+                        y: { title: { display: true, text: 'Level' }, min: 0, max: 10 }
+                    }
+                }
+            });
+        } else {
+            console.warn("Chart data is missing or invalid.");
+        }
+    </script>
+</body>
+</html>
