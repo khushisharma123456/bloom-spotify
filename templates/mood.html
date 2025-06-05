@@ -184,6 +184,12 @@
                     <!-- Mood history will be loaded here -->
                 </div>
             </div>
+            <div class="spotify-section glass-card" id="spotify-connect-section">
+    <h3>Spotify Connection</h3>
+    <div id="spotify-status">
+        <!-- Status will be updated by JavaScript -->
+    </div>
+</div>
         </main>
     </div>
 
@@ -196,46 +202,33 @@
     </div>
 
     <script>
-    // Add this to your index.html and mood.html
 document.addEventListener('DOMContentLoaded', function() {
-    // Check Spotify connection status when page loads
     checkSpotifyStatus();
     
-    // Mood selection handler
+    // Mood selection handlers
     document.querySelectorAll('.mood-option').forEach(option => {
         option.addEventListener('click', function() {
             document.querySelectorAll('.mood-option').forEach(opt => opt.classList.remove('selected'));
             this.classList.add('selected');
-            const mood = this.dataset.mood;
-            
-            // If intensity is already selected, fetch playlist
             const activeStars = document.querySelectorAll('.star.active').length;
             if (activeStars > 0) {
-                fetchMoodPlaylist(mood, activeStars);
+                fetchMoodPlaylist(this.dataset.mood, activeStars);
             }
         });
     });
 
-    // Star rating handler
+    // Star rating handlers
     document.querySelectorAll('.star').forEach(star => {
         star.addEventListener('click', function() {
             const rating = parseInt(this.dataset.rating);
-            
             document.querySelectorAll('.star').forEach((s, index) => {
                 s.classList.toggle('active', index < rating);
             });
-            
-            // If mood is already selected, fetch playlist
             const selectedMood = document.querySelector('.mood-option.selected');
             if (selectedMood) {
                 fetchMoodPlaylist(selectedMood.dataset.mood, rating);
             }
         });
-    });
-
-    // Spotify login button
-    document.getElementById('spotify-login').addEventListener('click', function() {
-        window.location.href = '/spotify_login';
     });
 });
 
@@ -243,160 +236,26 @@ function checkSpotifyStatus() {
     fetch('/check_spotify_status')
         .then(response => response.json())
         .then(data => {
-            const spotifySection = document.querySelector('.spotify-section');
-            const playlistDisplay = document.getElementById('playlistDisplay');
-            
+            const statusDiv = document.getElementById('spotify-status');
             if (data.connected) {
-                // Update UI to show connected status
-                document.getElementById('spotify-login').textContent = `Connected as ${data.display_name}`;
-                document.getElementById('spotify-login').style.backgroundColor = '#1DB954';
-                
-                // Show any existing playlist if available
-                if (playlistDisplay.innerHTML.trim() === '') {
-                    playlistDisplay.innerHTML = `
-                        <p>Select a mood and intensity to get a personalized playlist</p>
-                    `;
-                }
-            } else {
-                // Show login prompt
-                playlistDisplay.innerHTML = `
-                    <div class="spotify-login-prompt">
-                        <p>Connect with Spotify to get personalized playlists for your mood!</p>
-                        <button id="spotify-login-btn" class="spotify-login-btn">
-                            <i class="fab fa-spotify"></i> Connect with Spotify
-                        </button>
-                    </div>
+                statusDiv.innerHTML = `
+                    <p>Connected as ${data.display_name}</p>
+                    <button onclick="window.location.href='/spotify_login'" class="spotify-login-btn">
+                        Reconnect to Spotify
+                    </button>
                 `;
-                
-                document.getElementById('spotify-login-btn').addEventListener('click', function() {
-                    window.location.href = '/spotify_login';
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Error checking Spotify status:', error);
-        });
-}
-
-function fetchMoodPlaylist(mood, intensity) {
-    // First check if we have Spotify access
-    fetch('/get_mood_playlist', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            mood: mood,
-            intensity: intensity
-        })
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(err => { throw err; });
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.error) {
-            if (data.error === 'Spotify not connected') {
-                showSpotifyLoginPrompt();
             } else {
-                alert(data.error);
+                statusDiv.innerHTML = `
+                    <p>Connect with Spotify for mood-based playlists</p>
+                    <button onclick="window.location.href='/spotify_login'" class="spotify-login-btn">
+                        Connect with Spotify
+                    </button>
+                `;
             }
-        } else {
-            displayPlaylist(data);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        if (error.error === 'Spotify session expired. Please reconnect.') {
-            showSpotifyLoginPrompt('Your Spotify session has expired. Please reconnect.');
-        } else {
-            alert('Failed to load playlist: ' + (error.error || 'Unknown error'));
-        }
-    });
+        });
 }
 
-function displayPlaylist(playlistData) {
-    const playlistDisplay = document.getElementById('playlistDisplay');
-    
-    // Create sample tracks HTML
-    let sampleTracksHtml = '';
-    if (playlistData.sample_tracks && playlistData.sample_tracks.length > 0) {
-        sampleTracksHtml = `<div class="sample-tracks">
-            <h4>Sample Tracks:</h4>
-            <ul>`;
-        
-        playlistData.sample_tracks.forEach(track => {
-            const previewButton = track.preview_url ? 
-                `<button class="play-preview" data-preview="${track.preview_url}">
-                    <i class="fas fa-play"></i> Preview
-                </button>` : '';
-            
-            sampleTracksHtml += `
-                <li>
-                    <strong>${track.name}</strong> by ${track.artists}
-                    ${previewButton}
-                </li>`;
-        });
-        
-        sampleTracksHtml += `</ul></div>`;
-    }
-    
-    playlistDisplay.innerHTML = `
-        <div class="playlist-info">
-            <h3>${playlistData.playlist_name}</h3>
-            <p class="playlist-description">${playlistData.playlist_description}</p>
-            <div class="playlist-image">
-                <img src="${playlistData.playlist_image}" alt="${playlistData.playlist_name}">
-            </div>
-            <p>${playlistData.tracks} tracks • Curated by ${playlistData.owner}</p>
-            <a href="${playlistData.playlist_url}" target="_blank" class="open-spotify-btn">
-                <i class="fab fa-spotify"></i> Open in Spotify
-            </a>
-            ${sampleTracksHtml}
-        </div>
-        <iframe src="https://open.spotify.com/embed/playlist/${playlistData.playlist_id}" 
-                width="100%" height="380" frameborder="0" allowtransparency="true" 
-                allow="encrypted-media" style="border-radius: 12px;"></iframe>
-    `;
-    
-    // Add event listeners for preview buttons
-    document.querySelectorAll('.play-preview').forEach(button => {
-        button.addEventListener('click', function() {
-            const previewUrl = this.dataset.preview;
-            const audio = new Audio(previewUrl);
-            audio.play();
-            
-            // Change icon to pause when playing
-            const icon = this.querySelector('i');
-            icon.classList.remove('fa-play');
-            icon.classList.add('fa-pause');
-            
-            // Change back when finished
-            audio.onended = () => {
-                icon.classList.remove('fa-pause');
-                icon.classList.add('fa-play');
-            };
-        });
-    });
-}
-
-function showSpotifyLoginPrompt(message = 'Connect with Spotify to get personalized playlists for your mood!') {
-    const playlistDisplay = document.getElementById('playlistDisplay');
-    playlistDisplay.innerHTML = `
-        <div class="spotify-login-prompt">
-            <p>${message}</p>
-            <button id="spotify-login-btn" class="spotify-login-btn">
-                <i class="fab fa-spotify"></i> Connect with Spotify
-            </button>
-        </div>
-    `;
-    
-    document.getElementById('spotify-login-btn').addEventListener('click', function() {
-        window.location.href = '/spotify_login';
-    });
-}
+// Keep your existing fetchMoodPlaylist, displayPlaylist, and showSpotifyLoginPrompt functions
 </script>
 </body>
 </html>
