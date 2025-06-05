@@ -623,6 +623,14 @@ def check_spotify_status():
             'display_name': session.get('spotify_display_name', 'Spotify User')
         })
     return jsonify({'connected': False})
+
+@app.route('/debug_spotify')
+def debug_spotify():
+    return jsonify({
+        'user_in_session': 'user_id' in session,
+        'spotify_connected': 'spotify_access_token' in session,
+        'token_valid': is_spotify_token_valid() if 'spotify_access_token' in session else False
+    })
 #=======================================================================================================================
 
 
