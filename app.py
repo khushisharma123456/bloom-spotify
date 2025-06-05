@@ -383,14 +383,26 @@ def spotify_login():
 # Update the callback route
 @app.route('/callback')
 def spotify_callback():
-    if 'error' in request.args:
-        flash('Spotify authorization failed: ' + request.args['error'], 'error')
-        return redirect(url_for('dashboard'))
-    
-    if 'code' in request.args:
-        code = request.args['code']
+    try:
+        print("\n=== STARTING SPOTIFY CALLBACK ===")  # Debug
         
-        # Prepare the authorization header
+        # 1. Check for errors from Spotify
+        if 'error' in request.args:
+            error_msg = f"Spotify error: {request.args['error']}"
+            print(error_msg)  # Debug
+            flash(error_msg, 'error')
+            return redirect(url_for('dashboard'))
+
+        # 2. Verify authorization code exists
+        if 'code' not in request.args:
+            print("No authorization code received")  # Debug
+            flash("Authorization failed: no code received", 'error')
+            return redirect(url_for('dashboard'))
+
+        code = request.args['code']
+        print(f"Received auth code: {code}")  # Debug
+
+        # 3. Prepare token request
         auth_header = base64.b64encode(
             f"{SPOTIFY_CLIENT_ID}:{SPOTIFY_CLIENT_SECRET}".encode()
         ).decode()
@@ -400,41 +412,59 @@ def spotify_callback():
             'Content-Type': 'application/x-www-form-urlencoded'
         }
         
-        # Exchange code for access token
-        auth_response = requests.post(SPOTIFY_TOKEN_URL, data={
+        data = {
             'grant_type': 'authorization_code',
             'code': code,
             'redirect_uri': SPOTIFY_REDIRECT_URI,
-        }, headers=headers)
+        }
+
+        # 4. Exchange code for token
+        print("Requesting token from Spotify...")  # Debug
+        auth_response = requests.post(SPOTIFY_TOKEN_URL, data=data, headers=headers)
         
-        if auth_response.status_code == 200:
-            auth_data = auth_response.json()
-            
-            # Store tokens in session with expiry time
-            session['spotify_access_token'] = auth_data['access_token']
-            if 'refresh_token' in auth_data:
-                session['spotify_refresh_token'] = auth_data['refresh_token']
-            
-            # Set token expiry time (1 hour from now)
-            session['spotify_token_expiry'] = datetime.now() + timedelta(seconds=auth_data.get('expires_in', 3600))
-            
-            # Get user profile to store display name
-            profile_response = requests.get(
-                f"{SPOTIFY_API_BASE}/me",
-                headers={'Authorization': f"Bearer {auth_data['access_token']}"}
-            )
-            
-            if profile_response.status_code == 200:
-                profile_data = profile_response.json()
-                session['spotify_display_name'] = profile_data.get('display_name', 'Spotify User')
-            
-            flash('Successfully connected with Spotify!', 'success')
+        print(f"Token response status: {auth_response.status_code}")  # Debug
+        print(f"Token response body: {auth_response.text}")  # Debug
+
+        if auth_response.status_code != 200:
+            error_msg = f"Failed to get token: {auth_response.text}"
+            print(error_msg)  # Debug
+            flash(error_msg, 'error')
             return redirect(url_for('dashboard'))
+
+        auth_data = auth_response.json()
+        print(f"Token data: {auth_data}")  # Debug
+
+        # 5. Store tokens in session
+        session.update({
+            'spotify_access_token': auth_data['access_token'],
+            'spotify_token_expiry': datetime.now() + timedelta(seconds=auth_data.get('expires_in', 3600)),
+            'spotify_display_name': 'Spotify User'  # Default
+        })
+
+        if 'refresh_token' in auth_data:
+            session['spotify_refresh_token'] = auth_data['refresh_token']
+
+        # 6. Fetch user profile (optional)
+        print("Fetching user profile...")  # Debug
+        profile_response = requests.get(
+            f"{SPOTIFY_API_BASE}/me",
+            headers={'Authorization': f"Bearer {auth_data['access_token']}"}
+        )
+        
+        if profile_response.status_code == 200:
+            profile_data = profile_response.json()
+            session['spotify_display_name'] = profile_data.get('display_name', 'Spotify User')
+            print(f"User profile: {profile_data}")  # Debug
         else:
-            flash('Failed to connect with Spotify. Please try again.', 'error')
-            return redirect(url_for('dashboard'))
-    
-    return redirect(url_for('dashboard'))
+            print(f"Profile fetch failed: {profile_response.text}")  # Debug
+
+        flash('Successfully connected to Spotify!', 'success')
+        return redirect(url_for('dashboard'))
+
+    except Exception as e:
+        print(f"\n!!! CALLBACK ERROR: {str(e)}")  # Debug
+        flash('Internal server error during Spotify login', 'error')
+        return redirect(url_for('dashboard'))
 
 # Update the refresh token route
 @app.route('/refresh_token')
