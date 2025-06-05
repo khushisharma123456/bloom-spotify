@@ -69,13 +69,6 @@ class SurveyResponse(db.Model):
 
 with app.app_context():
     db.create_all()
-
-# Spotify configuration
-SPOTIFY_CLIENT_ID = '6b770d2f043948dc9515d3a5f65a5113'
-SPOTIFY_CLIENT_SECRET = 'bbf02678958948eda30ff6bc0e616058'
-SPOTIFY_REDIRECT_URI = 'http://localhost:5000/callback'
-SPOTIFY_AUTH_URL = 'https://accounts.spotify.com/authorize'
-SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token'
     
 @app.route('/')
 def home():
