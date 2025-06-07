@@ -9,19 +9,19 @@ import requests
 from urllib.parse import urlencode
 import base64
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
+load_dotenv()  # This loads the .env file
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SESSION_TYPE'] = 'filesystem'
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=1)
 
 db = SQLAlchemy(app)
 
-SPOTIFY_CLIENT_ID = 'abc5d2ee561440dda30db22c9a21de11'
-SPOTIFY_CLIENT_SECRET = '76df013118044b8abd348bf963c65d55'
-SPOTIFY_REDIRECT_URI = 'https://bloom-spotify.onrender.com/callback'
+SPOTIFY_CLIENT_ID = '6b770d2f043948dc9515d3a5f65a5113'
+SPOTIFY_CLIENT_SECRET = 'bbf02678958948eda30ff6bc0e616058'
+SPOTIFY_REDIRECT_URI = 'http://localhost:5000/callback'
 SPOTIFY_AUTH_URL = 'https://accounts.spotify.com/authorize'
 SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token'
 SPOTIFY_API_BASE = 'https://api.spotify.com/v1'
@@ -71,6 +71,13 @@ class SurveyResponse(db.Model):
 
 with app.app_context():
     db.create_all()
+
+# Spotify configuration
+SPOTIFY_CLIENT_ID = '6b770d2f043948dc9515d3a5f65a5113'
+SPOTIFY_CLIENT_SECRET = 'bbf02678958948eda30ff6bc0e616058'
+SPOTIFY_REDIRECT_URI = 'http://localhost:5000/callback'
+SPOTIFY_AUTH_URL = 'https://accounts.spotify.com/authorize'
+SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token'
     
 @app.route('/')
 def home():
@@ -143,11 +150,28 @@ def survey():
 
     if request.method == 'POST':
         try:
+            # Get the date string from the form (format: "d MMM yyyy" like "15 Jun 2023")
+            last_period_str = request.form.get('q2')
+            
+            # Parse the date string into a date object
+            try:
+                last_period = datetime.strptime(last_period_str, '%d %b %Y').date()
+            except ValueError:
+                # Try alternative format if the first one fails
+                try:
+                    last_period = datetime.strptime(last_period_str, '%Y-%m-%d').date()
+                except ValueError as e:
+                    flash(f'Invalid date format: {last_period_str}. Please use the calendar picker.', 'danger')
+                    return redirect(url_for('survey'))
+
+            # Debug print all form data
+            print("Form data received:", request.form)
+            
             new_response = SurveyResponse(
                 user_id=session['user_id'],
                 q1_age=request.form.get('q1', type=int),
-                q2_last_period=datetime.strptime(request.form.get('q2'), '%Y-%m-%d').date(),
-                q3_period_duration=request.form.get('q3'),  # Period duration select has same `name="q2"` — needs correction!
+                q2_last_period=last_period,
+                q3_period_duration=request.form.get('q3'),
                 q4_cycle_length=request.form.get('q4'),
                 q5_period_regularity=request.form.get('q5'),
                 q6_hair_growth=request.form.get('q6'),
@@ -169,14 +193,11 @@ def survey():
 
         except Exception as e:
             db.session.rollback()
-            flash('Error saving survey responses. Please try again.', 'danger')
-
-    if user.survey_completed:
-        flash('You have already completed the survey!', 'info')
-        return redirect(url_for('dashboard'))
-
-    return render_template('survey.html', user_name=session['user_name'])
-
+            flash(f'Error saving survey responses: {str(e)}. Please check all fields and try again.', 'danger')
+            print("Error details:", str(e))
+            return redirect(url_for('survey'))
+    
+    return render_template('survey.html')
 
 @app.route('/dashboard')
 def dashboard():
@@ -385,26 +406,14 @@ def spotify_login():
 # Update the callback route
 @app.route('/callback')
 def spotify_callback():
-    try:
-        print("\n=== STARTING SPOTIFY CALLBACK ===")  # Debug
-        
-        # 1. Check for errors from Spotify
-        if 'error' in request.args:
-            error_msg = f"Spotify error: {request.args['error']}"
-            print(error_msg)  # Debug
-            flash(error_msg, 'error')
-            return redirect(url_for('dashboard'))
-
-        # 2. Verify authorization code exists
-        if 'code' not in request.args:
-            print("No authorization code received")  # Debug
-            flash("Authorization failed: no code received", 'error')
-            return redirect(url_for('dashboard'))
-
+    if 'error' in request.args:
+        flash('Spotify authorization failed: ' + request.args['error'], 'error')
+        return redirect(url_for('dashboard'))
+    
+    if 'code' in request.args:
         code = request.args['code']
-        print(f"Received auth code: {code}")  # Debug
-
-        # 3. Prepare token request
+        
+        # Prepare the authorization header
         auth_header = base64.b64encode(
             f"{SPOTIFY_CLIENT_ID}:{SPOTIFY_CLIENT_SECRET}".encode()
         ).decode()
@@ -414,59 +423,41 @@ def spotify_callback():
             'Content-Type': 'application/x-www-form-urlencoded'
         }
         
-        data = {
+        # Exchange code for access token
+        auth_response = requests.post(SPOTIFY_TOKEN_URL, data={
             'grant_type': 'authorization_code',
             'code': code,
             'redirect_uri': SPOTIFY_REDIRECT_URI,
-        }
-
-        # 4. Exchange code for token
-        print("Requesting token from Spotify...")  # Debug
-        auth_response = requests.post(SPOTIFY_TOKEN_URL, data=data, headers=headers)
+        }, headers=headers)
         
-        print(f"Token response status: {auth_response.status_code}")  # Debug
-        print(f"Token response body: {auth_response.text}")  # Debug
-
-        if auth_response.status_code != 200:
-            error_msg = f"Failed to get token: {auth_response.text}"
-            print(error_msg)  # Debug
-            flash(error_msg, 'error')
+        if auth_response.status_code == 200:
+            auth_data = auth_response.json()
+            
+            # Store tokens in session with expiry time
+            session['spotify_access_token'] = auth_data['access_token']
+            if 'refresh_token' in auth_data:
+                session['spotify_refresh_token'] = auth_data['refresh_token']
+            
+            # Set token expiry time (1 hour from now)
+            session['spotify_token_expiry'] = datetime.now() + timedelta(seconds=auth_data.get('expires_in', 3600))
+            
+            # Get user profile to store display name
+            profile_response = requests.get(
+                f"{SPOTIFY_API_BASE}/me",
+                headers={'Authorization': f"Bearer {auth_data['access_token']}"}
+            )
+            
+            if profile_response.status_code == 200:
+                profile_data = profile_response.json()
+                session['spotify_display_name'] = profile_data.get('display_name', 'Spotify User')
+            
+            flash('Successfully connected with Spotify!', 'success')
             return redirect(url_for('dashboard'))
-
-        auth_data = auth_response.json()
-        print(f"Token data: {auth_data}")  # Debug
-
-        # 5. Store tokens in session
-        session.update({
-            'spotify_access_token': auth_data['access_token'],
-            'spotify_token_expiry': datetime.now() + timedelta(seconds=auth_data.get('expires_in', 3600)),
-            'spotify_display_name': 'Spotify User'  # Default
-        })
-
-        if 'refresh_token' in auth_data:
-            session['spotify_refresh_token'] = auth_data['refresh_token']
-
-        # 6. Fetch user profile (optional)
-        print("Fetching user profile...")  # Debug
-        profile_response = requests.get(
-            f"{SPOTIFY_API_BASE}/me",
-            headers={'Authorization': f"Bearer {auth_data['access_token']}"}
-        )
-        
-        if profile_response.status_code == 200:
-            profile_data = profile_response.json()
-            session['spotify_display_name'] = profile_data.get('display_name', 'Spotify User')
-            print(f"User profile: {profile_data}")  # Debug
         else:
-            print(f"Profile fetch failed: {profile_response.text}")  # Debug
-
-        flash('Successfully connected to Spotify!', 'success')
-        return redirect(url_for('dashboard'))
-
-    except Exception as e:
-        print(f"\n!!! CALLBACK ERROR: {str(e)}")  # Debug
-        flash('Internal server error during Spotify login', 'error')
-        return redirect(url_for('dashboard'))
+            flash('Failed to connect with Spotify. Please try again.', 'error')
+            return redirect(url_for('dashboard'))
+    
+    return redirect(url_for('dashboard'))
 
 # Update the refresh token route
 @app.route('/refresh_token')
@@ -502,72 +493,77 @@ def refresh_token():
     else:
         return jsonify({"error": "Failed to refresh token"}), 400
 
-# Enhanced get_mood_playlist route
+# Update the get_mood_playlist route in app.py
 @app.route('/get_mood_playlist', methods=['POST'])
 def get_mood_playlist():
     if 'user_id' not in session:
         return jsonify({'error': 'User not logged in'}), 401
     
-    # Check if we need to refresh the token
-    if not is_spotify_token_valid() and 'spotify_refresh_token' in session:
-        refresh_response = refresh_token()
-        if refresh_response.status_code != 200:
-            session.pop('spotify_access_token', None)
-            session.pop('spotify_refresh_token', None)
-            session.pop('spotify_token_expiry', None)
-            return jsonify({'error': 'Spotify session expired. Please reconnect.'}), 401
-    
-    if 'spotify_access_token' not in session:
-        return jsonify({'error': 'Spotify not connected'}), 401
+    # Check Spotify token status
+    if not is_spotify_token_valid():
+        if 'spotify_refresh_token' in session:
+            refresh_response = refresh_token()
+            if refresh_response.status_code != 200:
+                return jsonify({'error': 'Spotify session expired. Please reconnect.'}), 401
+        else:
+            return jsonify({'error': 'Spotify not connected'}), 401
     
     data = request.get_json()
     mood = data.get('mood')
-    intensity = data.get('intensity', 3)  # Default to medium intensity
+    intensity = data.get('intensity', 3)
     
     if not mood:
         return jsonify({'error': 'Mood not specified'}), 400
     
-    # Enhanced mood to playlist mapping
+    # Enhanced mood to playlist mapping with mood improvement paths
     mood_playlists = {
         'happy': {
-            1: {'id': '37i9dQZF1DXdPec7aLTmlC', 'name': 'Happy Hits', 'description': 'Light and cheerful tunes'},
-            2: {'id': '37i9dQZF1DX3rxVfibe1L0', 'name': 'Mood Booster', 'description': 'Songs to lift your spirits'},
-            3: {'id': '37i9dQZF1DX0XUsuxWHRQd', 'name': 'RapCaviar', 'description': 'High-energy hip-hop'},
-            4: {'id': '37i9dQZF1DX4dyzvuaRJ0n', 'name': 'mint', 'description': 'Fresh dance and electronic'},
-            5: {'id': '37i9dQZF1DX4SBhb3fqCJd', 'name': 'Are & Be', 'description': 'The best in R&B right now'}
+            1: {'id': '37i9dQZF1DXdPec7aLTmlC', 'name': 'Happy Hits', 'description': 'Light and cheerful tunes to maintain your happiness'},
+            2: {'id': '37i9dQZF1DX3rxVfibe1L0', 'name': 'Mood Booster', 'description': 'Songs scientifically proven to boost your mood'},
+            3: {'id': '37i9dQZF1DX0XUsuxWHRQd', 'name': 'RapCaviar', 'description': 'High-energy hip-hop to keep your spirits high'},
+            4: {'id': '37i9dQZF1DX4dyzvuaRJ0n', 'name': 'mint', 'description': 'Fresh dance and electronic music to elevate your mood'},
+            5: {'id': '37i9dQZF1DX4SBhb3fqCJd', 'name': 'Are & Be', 'description': 'The best in uplifting R&B right now'}
         },
         'sad': {
-            1: {'id': '37i9dQZF1DX7qK8ma5wgG1', 'name': 'Sad Songs', 'description': 'Gentle melancholic melodies'},
-            2: {'id': '37i9dQZF1DWVV27DiNWxkR', 'name': 'Sad Indie', 'description': 'Indie songs for rainy days'},
-            3: {'id': '37i9dQZF1DX3YSRoSdA634', 'name': 'Life Sucks', 'description': 'Emo and alternative for tough times'},
-            4: {'id': '37i9dQZF1DX3YSRoSdA634', 'name': 'Life Sucks', 'description': 'Emo and alternative for tough times'},
-            5: {'id': '37i9dQZF1DX3YSRoSdA634', 'name': 'Life Sucks', 'description': 'Emo and alternative for tough times'}
+            1: {'id': '37i9dQZF1DX7qK8ma5wgG1', 'name': 'Comforting Melodies', 'description': 'Gentle songs to comfort you in tough times'},
+            2: {'id': '37i9dQZF1DWVV27DiNWxkR', 'name': 'Indie Comfort', 'description': 'Indie songs that understand what you\'re feeling'},
+            3: {'id': '37i9dQZF1DX3YSRoSdA634', 'name': 'Life Sucks', 'description': 'Songs that get it when you\'re feeling down'},
+            4: {'id': '37i9dQZF1DX1s9knjP51Oa', 'name': 'Calm Vibes', 'description': 'Soothing music to help you relax and recover'},
+            5: {'id': '37i9dQZF1DX3rxVfibe1L0', 'name': 'Mood Booster', 'description': 'Songs to help lift you out of sadness'}
         },
         'angry': {
-            1: {'id': '37i9dQZF1DX0vHZ8elq0UK', 'name': 'Rock This', 'description': 'Classic rock anthems'},
-            2: {'id': '37i9dQZF1DX1s9knjP51Oa', 'name': 'Calm Vibes', 'description': 'Soothing instrumental music'},
-            3: {'id': '37i9dQZF1DX4sWSpwq3LiO', 'name': 'Rock Classics', 'description': 'Legendary rock tracks'},
-            4: {'id': '37i9dQZF1DX5wgkQjaJeZO', 'name': 'Thrash Metal', 'description': 'High-intensity metal'},
-            5: {'id': '37i9dQZF1DX5wgkQjaJeZO', 'name': 'Thrash Metal', 'description': 'High-intensity metal'}
+            1: {'id': '37i9dQZF1DX0vHZ8elq0UK', 'name': 'Rock This', 'description': 'Classic rock anthems to channel your energy'},
+            2: {'id': '37i9dQZF1DX1s9knjP51Oa', 'name': 'Calm Vibes', 'description': 'Soothing instrumental music to calm your mind'},
+            3: {'id': '37i9dQZF1DX4sWSpwq3LiO', 'name': 'Rock Classics', 'description': 'Legendary rock tracks to help you release tension'},
+            4: {'id': '37i9dQZF1DWU0ScTcjJBdj', 'name': 'Relax & Unwind', 'description': 'Music to help you relax and let go of anger'},
+            5: {'id': '37i9dQZF1DX5wgkQjaJeZO', 'name': 'Thrash Metal', 'description': 'High-intensity metal for when you need to vent'}
         },
         'energetic': {
             1: {'id': '37i9dQZF1DX9tPFwDMOaN1', 'name': 'Energy Booster', 'description': 'Upbeat tracks to get you moving'},
             2: {'id': '37i9dQZF1DX76Wlfdnj7AP', 'name': 'Beast Mode', 'description': 'High-energy workout music'},
             3: {'id': '37i9dQZF1DX0XUsuxWHRQd', 'name': 'RapCaviar', 'description': 'The hottest hip-hop tracks'},
             4: {'id': '37i9dQZF1DX8f6LHxMjnzD', 'name': 'Punk Rock', 'description': 'Fast and furious punk anthems'},
-            5: {'id': '37i9dQZF1DX8f6LHxMjnzD', 'name': 'Punk Rock', 'description': 'Fast and furious punk anthems'}
+            5: {'id': '37i9dQZF1DXa2SPUyWl8Y5', 'name': 'Cardio', 'description': 'High-energy tracks to keep you pumped'}
         },
         'content': {
             1: {'id': '37i9dQZF1DX4WYpdgoIcn6', 'name': 'Chill Hits', 'description': 'Relaxed vibes for easy listening'},
-            2: {'id': '37i9dQZF1DX4WYpdgoIcn6', 'name': 'Chill Hits', 'description': 'Relaxed vibes for easy listening'},
+            2: {'id': '37i9dQZF1DX7qK8ma5wgG1', 'name': 'Peaceful Piano', 'description': 'Calming piano music for relaxation'},
             3: {'id': '37i9dQZF1DWU0ScTcjJBdj', 'name': 'Relax & Unwind', 'description': 'Soothing sounds to calm your mind'},
-            4: {'id': '37i9dQZF1DWU0ScTcjJBdj', 'name': 'Relax & Unwind', 'description': 'Soothing sounds to calm your mind'},
-            5: {'id': '37i9dQZF1DWU0ScTcjJBdj', 'name': 'Relax & Unwind', 'description': 'Soothing sounds to calm your mind'}
+            4: {'id': '37i9dQZF1DX4WYpdgoIcn6', 'name': 'Chill Hits', 'description': 'Relaxed vibes for easy listening'},
+            5: {'id': '37i9dQZF1DX4WYpdgoIcn6', 'name': 'Chill Hits', 'description': 'Relaxed vibes for easy listening'}
         }
     }
     
-    # Get the appropriate playlist based on mood and intensity
-    playlist_info = mood_playlists.get(mood.lower(), {}).get(int(intensity), None)
+    # If mood is negative (sad/angry), consider suggesting a path to better mood
+    if mood.lower() == 'sad' and intensity >= 4:
+        # For high-intensity sadness, suggest happy playlists
+        playlist_info = mood_playlists['happy'].get(3)  # Default to medium happy
+    elif mood.lower() == 'angry' and intensity >= 4:
+        # For high-intensity anger, suggest calming playlists
+        playlist_info = mood_playlists['content'].get(2)  # Default to medium calm
+    else:
+        # Otherwise use the requested mood
+        playlist_info = mood_playlists.get(mood.lower(), {}).get(int(intensity), None)
     
     if not playlist_info:
         return jsonify({'error': 'No playlist found for this mood'}), 404
@@ -610,7 +606,9 @@ def get_mood_playlist():
             'playlist_image': playlist_data.get('images', [{}])[0].get('url', ''),
             'tracks': playlist_data.get('tracks', {}).get('total', 0),
             'sample_tracks': sample_tracks,
-            'owner': playlist_data.get('owner', {}).get('display_name', 'Spotify')
+            'owner': playlist_data.get('owner', {}).get('display_name', 'Spotify'),
+            'original_mood': mood,
+            'original_intensity': intensity
         })
         
     except Exception as e:
@@ -625,14 +623,6 @@ def check_spotify_status():
             'display_name': session.get('spotify_display_name', 'Spotify User')
         })
     return jsonify({'connected': False})
-
-@app.route('/debug_spotify')
-def debug_spotify():
-    return jsonify({
-        'user_in_session': 'user_id' in session,
-        'spotify_connected': 'spotify_access_token' in session,
-        'token_valid': is_spotify_token_valid() if 'spotify_access_token' in session else False
-    })
 #=======================================================================================================================
 
 
@@ -643,6 +633,175 @@ def chatbot():
         flash('Please log in first!', 'warning')
         return redirect(url_for('login'))
     return render_template('chatbot.html')
+
+@app.route('/api/get-api-key')
+def get_api_key():
+    print("GEMINI KEY:", os.getenv("GEMINI_API_KEY"))
+    api_key = os.getenv('GEMINI_API_KEY')
+    print("DEBUG: Loaded API Key =", api_key)  # Add this for verification
+    if not api_key:
+        abort(500, description="API key not configured on server")
+    return jsonify({'apiKey': api_key})
+
+    
+@app.route('/api/get-prompt-template')
+def get_prompt_template():
+    try:
+        with open('templates/prompt_template.txt', 'r') as file:
+            return file.read()
+    except FileNotFoundError:
+        abort(404, description="Prompt template not found")
+    except Exception as e:
+        abort(500, description=str(e))
+        
+@app.route('/settings')
+def settings():
+    if 'user_id' not in session:
+        flash('Please log in first!', 'warning')
+        return redirect(url_for('login'))
+    
+    user = User.query.get(session['user_id'])
+    survey = SurveyResponse.query.filter_by(user_id=user.id).order_by(SurveyResponse.timestamp.desc()).first()
+    
+    return render_template('settings.html', 
+                         user_name=user.full_name,
+                         email=user.email,
+                         cycle_length=user.cycle_length,
+                         period_length=user.period_length,
+                         survey=survey)
+
+# Add these new routes to app.py
+
+@app.route('/update_profile', methods=['POST'])
+def update_profile():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Not logged in'}), 401
+    
+    user = User.query.get(session['user_id'])
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+    
+    try:
+        user.full_name = request.form.get('full_name', user.full_name)
+        db.session.commit()
+        session['user_name'] = user.full_name  # Update session name
+        return jsonify({'success': True, 'message': 'Profile updated'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/update_cycle_settings', methods=['POST'])
+def update_cycle_settings():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Not logged in'}), 401
+    
+    user = User.query.get(session['user_id'])
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+    
+    try:
+        cycle_length = request.form.get('cycle_length', type=int)
+        period_length = request.form.get('period_length', type=int)
+        
+        if cycle_length and 20 <= cycle_length <= 45:  # Validate reasonable range
+            user.cycle_length = cycle_length
+        if period_length and 1 <= period_length <= 14:  # Validate reasonable range
+            user.period_length = period_length
+            
+        db.session.commit()
+        return jsonify({'success': True, 'message': 'Cycle settings updated'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/update_period_dates', methods=['POST'])
+def update_period_dates():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Not logged in'}), 401
+    
+    try:
+        start_date = datetime.strptime(request.form['start_date'], '%Y-%m-%d').date()
+        end_date = datetime.strptime(request.form['end_date'], '%Y-%m-%d').date()
+        
+        # Find or create a survey response for this user
+        survey = SurveyResponse.query.filter_by(user_id=session['user_id']).order_by(SurveyResponse.timestamp.desc()).first()
+        if not survey:
+            survey = SurveyResponse(user_id=session['user_id'])
+            db.session.add(survey)
+        
+        survey.q2_last_period = start_date
+        survey.q3_period_duration = f"{(end_date - start_date).days + 1} days"
+        db.session.commit()
+        
+        return jsonify({'success': True, 'message': 'Period dates updated'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/get_user_settings')
+def get_user_settings():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Not logged in'}), 401
+    
+    user = User.query.get(session['user_id'])
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+    
+    survey = SurveyResponse.query.filter_by(user_id=user.id).order_by(SurveyResponse.timestamp.desc()).first()
+    
+    return jsonify({
+        'full_name': user.full_name,
+        'email': user.email,
+        'cycle_length': user.cycle_length,
+        'period_length': user.period_length,
+        'last_period': survey.q2_last_period.strftime('%Y-%m-%d') if survey and survey.q2_last_period else None,
+        'period_duration': survey.q3_period_duration if survey else None,
+        'cycle_regularity': survey.q5_period_regularity if survey else None,
+        'symptoms': survey.q13_mood_swings if survey else None,
+        'hormonal_conditions': survey.q11_family_history if survey else None  # Using this field as example
+    })
+    
+@app.route('/update_survey_answers', methods=['POST'])
+def update_survey_answers():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Not logged in'}), 401
+    
+    user = User.query.get(session['user_id'])
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+    
+    try:
+        survey = SurveyResponse.query.filter_by(user_id=user.id).order_by(SurveyResponse.timestamp.desc()).first()
+        if not survey:
+            survey = SurveyResponse(user_id=user.id)
+            db.session.add(survey)
+        
+        # Update fields based on form data
+        if 'cycle_regularity' in request.form:
+            survey.q5_period_regularity = request.form['cycle_regularity']
+        
+        if 'cycle_length' in request.form:
+            try:
+                cycle_length = int(request.form['cycle_length'])
+                if 20 <= cycle_length <= 45:  # Validate range
+                    user.cycle_length = cycle_length
+                else:
+                    return jsonify({'error': 'Cycle length must be between 20-45 days'}), 400
+            except ValueError:
+                return jsonify({'error': 'Invalid cycle length'}), 400
+        
+        if 'symptoms' in request.form:
+            survey.q13_mood_swings = request.form['symptoms']
+        
+        if 'hormonal_conditions' in request.form:
+            # Add this field to your SurveyResponse model if needed
+            pass
+        
+        db.session.commit()
+        return jsonify({'success': True, 'message': 'Survey answers updated'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e), 'message': 'Failed to save changes'}), 500
 
 @app.route('/logout')
 def logout():
