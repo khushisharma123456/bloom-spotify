@@ -610,12 +610,27 @@ def get_mood_playlist():
 # Add this route to check Spotify connection status
 @app.route('/check_spotify_status')
 def check_spotify_status():
-    if 'spotify_access_token' in session and is_spotify_token_valid():
-        return jsonify({
-            'connected': True,
-            'display_name': session.get('spotify_display_name', 'Spotify User')
-        })
-    return jsonify({'connected': False})
+    try:
+        if 'spotify_access_token' in session and is_spotify_token_valid():
+            # Get user profile to verify connection
+            headers = {
+                'Authorization': f"Bearer {session['spotify_access_token']}"
+            }
+            response = requests.get(f"{SPOTIFY_API_BASE}/me", headers=headers)
+            
+            if response.status_code == 200:
+                profile = response.json()
+                return jsonify({
+                    'connected': True,
+                    'display_name': profile.get('display_name', 'Spotify User')
+                })
+        
+        # If any check fails
+        return jsonify({'connected': False})
+        
+    except Exception as e:
+        print(f"Error checking Spotify status: {str(e)}")
+        return jsonify({'error': str(e)}), 500
 #=======================================================================================================================
 
 
