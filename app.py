@@ -9,8 +9,7 @@ import requests
 from urllib.parse import urlencode
 import base64
 from datetime import datetime, timedelta
-from dotenv import load_dotenv
-load_dotenv()  # This loads the .env file
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
