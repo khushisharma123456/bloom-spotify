@@ -18,9 +18,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-SPOTIFY_CLIENT_ID = '6b770d2f043948dc9515d3a5f65a5113'
-SPOTIFY_CLIENT_SECRET = 'bbf02678958948eda30ff6bc0e616058'
-SPOTIFY_REDIRECT_URI = 'http://localhost:5000/callback'
+SPOTIFY_CLIENT_ID = 'abc5d2ee561440dda30db22c9a21de11'
+SPOTIFY_CLIENT_SECRET = '76df013118044b8abd348bf963c65d55'
+SPOTIFY_REDIRECT_URI = 'https://bloom-spotify.onrender.com/callback'
 SPOTIFY_AUTH_URL = 'https://accounts.spotify.com/authorize'
 SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token'
 SPOTIFY_API_BASE = 'https://api.spotify.com/v1'
