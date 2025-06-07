@@ -562,6 +562,43 @@
             background: #1ed760;
         }
 
+        .spotify-section {
+    padding: 20px;
+    background: #282828;
+    border-radius: 12px;
+    color: white;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.error {
+    color: #ff6b6b;
+    margin-bottom: 15px;
+}
+
+.spotify-login-btn {
+    background: #1DB954;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.spotify-login-btn:hover {
+    background: #1ed760;
+    transform: scale(1.05);
+}
+
+.spotify-login-btn i {
+    font-size: 1.2em;
+}
+
         .playlist-display {
             margin-top: 20px;
             text-align: center;
@@ -1021,52 +1058,45 @@
 
         // Check Spotify connection status
        async function checkSpotifyStatus() {
+    const spotifySection = document.querySelector('.spotify-section');
+    
     try {
         const response = await fetch('/check_spotify_status');
-        if (!response.ok) throw new Error('Network response was not ok');
+        
+        if (!response.ok) {
+            throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+        }
         
         const data = await response.json();
-        console.log('Spotify status response:', data); // Debug log
         
-        const spotifySection = document.querySelector('.spotify-section');
-        if (!spotifySection) return;
-        
+        if (data.error) {
+            throw new Error(data.error);
+        }
+
         if (data.connected) {
-            // Hide login button, show connected status
-            document.getElementById('spotify-login').style.display = 'none';
-            spotifySection.innerHTML += `
-                <p>Connected to Spotify as ${data.display_name || 'user'}</p>
+            spotifySection.innerHTML = `
+                <p>✅ Connected to Spotify as ${data.display_name || 'user'}</p>
                 <p>Select a mood to get playlist recommendations</p>
             `;
         } else {
-            // Show login button
-            document.getElementById('spotify-login').style.display = 'block';
             spotifySection.innerHTML = `
                 <button id="spotify-login" class="spotify-login-btn">
                     <i class="fab fa-spotify"></i> Connect with Spotify
                 </button>
-                <p>Connect to get personalized playlists</p>
             `;
-            // Re-attach event listener to new button
             document.getElementById('spotify-login').addEventListener('click', () => {
                 window.location.href = '/spotify_login';
             });
         }
     } catch (error) {
-        console.error('Spotify status check failed:', error);
-        const spotifySection = document.querySelector('.spotify-section');
-        if (spotifySection) {
-            spotifySection.innerHTML = `
-                <p class="error">Error: ${error.message}</p>
-                <button id="spotify-login" class="spotify-login-btn">
-                    <i class="fab fa-spotify"></i> Retry Connection
-                </button>
-            `;
-            // Re-attach event listener
-            document.getElementById('spotify-login').addEventListener('click', () => {
-                window.location.href = '/spotify_login';
-            });
-        }
+        console.error('Spotify connection error:', error);
+        spotifySection.innerHTML = `
+            <p class="error">⚠️ Connection Error: ${error.message}</p>
+            <button id="retry-connection" class="spotify-login-btn">
+                <i class="fas fa-sync-alt"></i> Retry Connection
+            </button>
+        `;
+        document.getElementById('retry-connection').addEventListener('click', checkSpotifyStatus);
     }
 }
 
