@@ -624,6 +624,68 @@
             background: #1ed760;
         }
 
+        .loading {
+    color: #1DB954;
+    font-style: italic;
+    text-align: center;
+}
+
+.playlist-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 15px;
+}
+
+.playlist-img {
+    max-width: 200px;
+    border-radius: 8px;
+    margin: 10px auto;
+    display: block;
+}
+
+.tracks {
+    margin: 15px 0;
+}
+
+.tracks ul {
+    list-style: none;
+    padding: 0;
+}
+
+.tracks li {
+    padding: 10px;
+    margin: 5px 0;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+}
+
+.spotify-link {
+    display: inline-block;
+    background: #1DB954;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 20px;
+    text-decoration: none;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+}
+
+.spotify-link:hover {
+    background: #1ed760;
+    transform: scale(1.05);
+}
+
+.retry-btn {
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
         /* Responsive Design */
         @media (max-width: 1024px) {
             .sidebar {
@@ -1008,43 +1070,77 @@
         });
 
         // Mood selection
-        const moodOptions = document.querySelectorAll('.mood-option');
-        moodOptions.forEach(option => {
-            option.addEventListener('click', function() {
-                // Remove selected class from all options
-                moodOptions.forEach(opt => opt.classList.remove('selected'));
-                
-                // Add selected class to clicked option
-                this.classList.add('selected');
-                const selectedMood = this.dataset.mood;
-                console.log('Mood selected:', selectedMood);
-                
-                // Show star rating
-                document.querySelector('.star-rating').style.display = 'flex';
-            });
+        document.querySelectorAll('.mood-option').forEach(option => {
+    option.addEventListener('click', async function() {
+        // Visual feedback
+        document.querySelectorAll('.mood-option').forEach(opt => {
+            opt.classList.remove('selected');
+            opt.style.transform = 'scale(1)';
         });
+        this.classList.add('selected');
+        this.style.transform = 'scale(1.1)';
+        
+        // Reset stars
+        document.querySelectorAll('.star').forEach(star => {
+            star.classList.remove('active');
+        });
+        
+        // Show loading state
+        const playlistDisplay = document.getElementById('playlistDisplay');
+        playlistDisplay.innerHTML = '<p class="loading">Loading recommendations...</p>';
+    });
+});
 
         // Star rating
-        const stars = document.querySelectorAll('.star');
-        stars.forEach(star => {
-            star.addEventListener('click', function() {
-                const rating = parseInt(this.dataset.rating);
-                console.log('Rating selected:', rating);
-                
-                // Update star display
-                stars.forEach((s, index) => {
-                    s.classList.toggle('active', index < rating);
-                });
-                
-                // Get selected mood and generate playlist
-                const selectedMood = document.querySelector('.mood-option.selected');
-                if (selectedMood) {
-                    generatePlaylist(selectedMood.dataset.mood, rating);
-                } else {
-                    console.log('Please select a mood first');
-                }
-            });
+        // Star rating selection
+document.querySelectorAll('.star').forEach(star => {
+    star.addEventListener('click', async function() {
+        const rating = parseInt(this.dataset.rating);
+        
+        // Update star display
+        document.querySelectorAll('.star').forEach((s, idx) => {
+            s.classList.toggle('active', idx < rating);
         });
+        
+        // Get selected mood
+        const selectedMood = document.querySelector('.mood-option.selected');
+        if (!selectedMood) {
+            alert('Please select a mood first!');
+            return;
+        }
+        
+        // Generate playlist
+        try {
+            const playlistDisplay = document.getElementById('playlistDisplay');
+            playlistDisplay.innerHTML = '<p class="loading">Finding perfect playlist...</p>';
+            
+            const response = await fetch('/get_mood_playlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    mood: selectedMood.dataset.mood,
+                    intensity: rating
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Server error: ${response.status}`);
+            }
+            
+            const playlistData = await response.json();
+            displayPlaylist(playlistData);
+            
+        } catch (error) {
+            console.error('Playlist error:', error);
+            document.getElementById('playlistDisplay').innerHTML = `
+                <p class="error">⚠️ Failed to load playlist: ${error.message}</p>
+                <button onclick="retryPlaylist()" class="retry-btn">Try Again</button>
+            `;
+        }
+    });
+});
 
         // Spotify login button
         const spotifyLoginBtn = document.getElementById('spotify-login');
@@ -1149,50 +1245,55 @@
 
         // Display playlist results
         function displayPlaylist(data) {
-            const playlistDisplay = document.getElementById('playlistDisplay');
-            if (!playlistDisplay) return;
+    const playlistDisplay = document.getElementById('playlistDisplay');
+    
+    if (!data || !data.playlist_name) {
+        playlistDisplay.innerHTML = `
+            <p class="error">⚠️ No playlist found for this mood</p>
+            <button onclick="retryPlaylist()" class="retry-btn">Try Again</button>
+        `;
+        return;
+    }
+    
+    playlistDisplay.innerHTML = `
+        <div class="playlist-card">
+            <h3>${data.playlist_name}</h3>
+            <p class="playlist-desc">${data.playlist_description}</p>
+            ${data.playlist_image ? `
+                <img src="${data.playlist_image}" alt="${data.playlist_name}" class="playlist-img">
+            ` : ''}
             
-            let html = `
-                <div class="playlist-result">
-                    <h3>${data.playlist_name}</h3>
-                    <p>${data.playlist_description}</p>
-            `;
+            <div class="tracks">
+                ${data.sample_tracks && data.sample_tracks.length > 0 ? `
+                    <h4>Sample Tracks:</h4>
+                    <ul>
+                        ${data.sample_tracks.map(track => `
+                            <li>
+                                <strong>${track.name}</strong> - ${track.artists}
+                                ${track.preview_url ? `
+                                    <audio controls>
+                                        <source src="${track.preview_url}" type="audio/mpeg">
+                                    </audio>
+                                ` : ''}
+                            </li>
+                        `).join('')}
+                    </ul>
+                ` : ''}
+            </div>
             
-            if (data.playlist_image) {
-                html += `<img src="${data.playlist_image}" alt="${data.playlist_name}" style="max-width: 200px; border-radius: 8px; margin: 10px 0;">`;
-            }
-            
-            if (data.sample_tracks && data.sample_tracks.length > 0) {
-                html += `<h4>Sample Tracks:</h4><ul style="list-style: none; padding: 0;">`;
-                data.sample_tracks.forEach(track => {
-                    html += `
-                        <li style="margin: 8px 0; padding: 8px; background: rgba(255,255,255,0.1); border-radius: 4px;">
-                            <strong>${track.name}</strong> - ${track.artists}
-                    `;
-                    if (track.preview_url) {
-                        html += `
-                            <audio controls style="height: 25px; width: 180px; margin-left: 10px;">
-                                <source src="${track.preview_url}" type="audio/mpeg">
-                            </audio>
-                        `;
-                    }
-                    html += `</li>`;
-                });
-                html += `</ul>`;
-            }
-            
-            html += `
-                <a href="${data.playlist_url}" target="_blank" 
-                   style="display: inline-block; background: #1DB954; color: white; 
-                          padding: 8px 16px; border-radius: 20px; margin-top: 10px; text-decoration: none;">
-                    Open in Spotify <i class="fab fa-spotify"></i>
-                </a>
-                </div>
-            `;
-            
-            playlistDisplay.innerHTML = html;
-        }
-    });
+            <a href="${data.playlist_url}" target="_blank" class="spotify-link">
+                Open in Spotify <i class="fab fa-spotify"></i>
+            </a>
+        </div>
+    `;
+}
+
+function retryPlaylist() {
+    const activeStars = document.querySelectorAll('.star.active').length;
+    if (activeStars > 0) {
+        document.querySelector(`.star[data-rating="${activeStars}"]`).click();
+    }
+}
 
     // Mobile responsive handling
     function handleResponsive() {
