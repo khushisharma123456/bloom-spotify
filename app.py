@@ -611,26 +611,35 @@ def get_mood_playlist():
 @app.route('/check_spotify_status')
 def check_spotify_status():
     try:
-        if 'spotify_access_token' in session and is_spotify_token_valid():
-            # Get user profile to verify connection
-            headers = {
-                'Authorization': f"Bearer {session['spotify_access_token']}"
-            }
-            response = requests.get(f"{SPOTIFY_API_BASE}/me", headers=headers)
+        # Check if we have a valid token
+        if 'spotify_access_token' not in session:
+            return jsonify({'connected': False})
             
-            if response.status_code == 200:
-                profile = response.json()
-                return jsonify({
-                    'connected': True,
-                    'display_name': profile.get('display_name', 'Spotify User')
-                })
+        # Verify token is still valid
+        headers = {
+            'Authorization': f"Bearer {session['spotify_access_token']}"
+        }
+        response = requests.get(f"{SPOTIFY_API_BASE}/me", headers=headers)
         
-        # If any check fails
+        if response.status_code == 200:
+            profile = response.json()
+            return jsonify({
+                'connected': True,
+                'display_name': profile.get('display_name', 'Spotify User')
+            })
+        
+        # If token is invalid, clear session
+        session.pop('spotify_access_token', None)
         return jsonify({'connected': False})
         
+    except requests.exceptions.RequestException as e:
+        return jsonify({
+            'error': f"Network error: {str(e)}"
+        }), 500
     except Exception as e:
-        print(f"Error checking Spotify status: {str(e)}")
-        return jsonify({'error': str(e)}), 500
+        return jsonify({
+            'error': f"Unexpected error: {str(e)}"
+        }), 500
 #=======================================================================================================================
 
 
