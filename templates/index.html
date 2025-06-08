@@ -1058,6 +1058,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize Spotify status check
     checkSpotifyStatus();
+
+    const defaultMood = 'happy';
+    const defaultIntensity = 3;
+    fetchPlaylist(defaultMood, defaultIntensity);
     
     // Symptom Chip Selection
     const symptomChips = document.querySelectorAll('.symptom-chip:not(.add-symptom)');
@@ -1096,16 +1100,18 @@ document.querySelectorAll('.mood-option').forEach(option => {
         });
 
         if (!response.ok) throw new Error(`Server error: ${response.status}`);
-        const playlistData = await response.json();
-        displayPlaylist(playlistData);
+        const data = await response.json();
+        displayPlaylist(data);
+
     } catch (error) {
-        console.error('Playlist error:', error);
+        console.error('Playlist fetch error:', error);
         playlistDisplay.innerHTML = `
             <p class="error">⚠️ Failed to load playlist: ${error.message}</p>
             <button onclick="retryPlaylist()" class="retry-btn">Try Again</button>
         `;
     }
 }
+
 
 
     // Star rating
