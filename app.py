@@ -10,7 +10,6 @@ from urllib.parse import urlencode
 import base64
 from datetime import datetime, timedelta
 
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
