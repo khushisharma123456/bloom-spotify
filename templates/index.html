@@ -644,6 +644,27 @@
 .spotify-login-btn i {
     font-size: 1.2em;
 }
+        .no-preview {
+    color: #aaa;
+    font-style: italic;
+    margin-top: 5px;
+}
+
+.loading {
+    color: #1DB954;
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+}
+
+.error {
+    color: #ff6b6b;
+    text-align: center;
+    padding: 10px;
+    background: rgba(255, 107, 107, 0.1);
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
 
         .playlist-display {
             margin-top: 20px;
@@ -1146,7 +1167,6 @@ document.querySelectorAll('.mood-option').forEach(option => {
     });
 });
 
-    // Update the fetchPlaylist function to handle the response better
 async function fetchPlaylist(mood, intensity) {
     const playlistDisplay = document.getElementById('playlistDisplay');
     playlistDisplay.innerHTML = '<p class="loading">Finding perfect playlist...</p>';
@@ -1158,13 +1178,12 @@ async function fetchPlaylist(mood, intensity) {
             body: JSON.stringify({ mood, intensity })
         });
 
-        if (!response.ok) throw new Error(`Server error: ${response.status}`);
-        const data = await response.json();
-        
-        if (data.error) {
-            throw new Error(data.error);
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `Server error: ${response.status}`);
         }
         
+        const data = await response.json();
         displayPlaylist(data);
 
     } catch (error) {
@@ -1344,8 +1363,9 @@ async function fetchPlaylist(mood, intensity) {
                             ${track.preview_url ? `
                                 <audio controls>
                                     <source src="${track.preview_url}" type="audio/mpeg">
+                                    Your browser does not support the audio element.
                                 </audio>
-                            ` : ''}
+                            ` : '<p class="no-preview">No preview available</p>'}
                         </li>
                     `).join('')}
                 </ul>
