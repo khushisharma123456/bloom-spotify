@@ -383,6 +383,10 @@ def is_spotify_token_valid():
 @app.route('/spotify_login')
 def spotify_login():
     """Redirect user to Spotify authorization page"""
+    # Ensure we don't have any existing token issues
+    session.pop('spotify_access_token', None)
+    session.pop('spotify_refresh_token', None)
+    
     scope = 'user-read-private user-read-email playlist-read-private playlist-modify-public playlist-modify-private'
     
     params = {
@@ -435,11 +439,11 @@ def spotify_callback():
         
         # Store tokens in session with expiry time
         session['spotify_access_token'] = auth_data['access_token']
+        session['spotify_token_expiry'] = datetime.now() + timedelta(seconds=auth_data.get('expires_in', 3600))
+        
+        # Store refresh token if provided (it might not be on subsequent authorizations)
         if 'refresh_token' in auth_data:
             session['spotify_refresh_token'] = auth_data['refresh_token']
-        
-        # Set token expiry time (1 hour from now)
-        session['spotify_token_expiry'] = datetime.now() + timedelta(seconds=auth_data.get('expires_in', 3600))
         
         # Get user profile to store display name
         profile_headers = {
@@ -464,37 +468,40 @@ def spotify_callback():
 
 # Update the refresh token route
 @app.route('/refresh_token')
-def refresh_token():
+def refresh_spotify_token():
     if 'spotify_refresh_token' not in session:
-        return jsonify({"error": "No refresh token"}), 401
+        return False
     
-    # Prepare the authorization header
-    auth_header = base64.b64encode(
-        f"{SPOTIFY_CLIENT_ID}:{SPOTIFY_CLIENT_SECRET}".encode()
-    ).decode()
-    
-    headers = {
-        'Authorization': f'Basic {auth_header}',
-        'Content-Type': 'application/x-www-form-urlencoded'
-    }
-    
-    refresh_response = requests.post(SPOTIFY_TOKEN_URL, data={
-        'grant_type': 'refresh_token',
-        'refresh_token': session['spotify_refresh_token'],
-    }, headers=headers)
-    
-    if refresh_response.status_code == 200:
-        refresh_data = refresh_response.json()
-        session['spotify_access_token'] = refresh_data['access_token']
-        session['spotify_token_expiry'] = datetime.now() + timedelta(seconds=refresh_data.get('expires_in', 3600))
+    try:
+        auth_header = base64.b64encode(
+            f"{SPOTIFY_CLIENT_ID}:{SPOTIFY_CLIENT_SECRET}".encode()
+        ).decode()
         
-        # Spotify may not return a new refresh token, so we keep the existing one
-        if 'refresh_token' in refresh_data:
-            session['spotify_refresh_token'] = refresh_data['refresh_token']
+        headers = {
+            'Authorization': f'Basic {auth_header}',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
         
-        return jsonify({"access_token": refresh_data['access_token']})
-    else:
-        return jsonify({"error": "Failed to refresh token"}), 400
+        token_data = {
+            'grant_type': 'refresh_token',
+            'refresh_token': session['spotify_refresh_token']
+        }
+        
+        response = requests.post(SPOTIFY_TOKEN_URL, data=token_data, headers=headers)
+        response.raise_for_status()
+        
+        data = response.json()
+        session['spotify_access_token'] = data['access_token']
+        session['spotify_token_expiry'] = datetime.now() + timedelta(seconds=data.get('expires_in', 3600))
+        
+        # Spotify may return a new refresh token (optional)
+        if 'refresh_token' in data:
+            session['spotify_refresh_token'] = data['refresh_token']
+        
+        return True
+    except Exception as e:
+        print(f"Error refreshing token: {str(e)}")
+        return False
 
 # Update the get_mood_playlist route in app.py
 # Update the get_mood_playlist route in app.py
