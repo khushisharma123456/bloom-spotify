@@ -530,6 +530,78 @@
             display: none;
         }
         .playlist-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    text-align: left;
+}
+
+.playlist-img {
+    width: 100%;
+    max-width: 300px;
+    border-radius: 8px;
+    margin: 15px auto;
+    display: block;
+}
+
+.tracks ul {
+    list-style: none;
+    padding: 0;
+    margin: 15px 0;
+}
+
+.tracks li {
+    padding: 12px;
+    margin: 8px 0;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-purple);
+}
+
+.no-preview {
+    color: #6c757d;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+.spotify-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #1DB954;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    margin-top: 15px;
+    transition: all 0.3s ease;
+}
+
+.spotify-link:hover {
+    background: #1ed760;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.retry-btn {
+    background: var(--primary-purple);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.retry-btn:hover {
+    background: #5a4a80;
+}
+        .playlist-card {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     padding: 20px;
@@ -1169,28 +1241,37 @@ document.querySelectorAll('.mood-option').forEach(option => {
 
 async function fetchPlaylist(mood, intensity) {
     const playlistDisplay = document.getElementById('playlistDisplay');
-    playlistDisplay.innerHTML = '<p class="loading">Finding perfect playlist...</p>';
+    playlistDisplay.innerHTML = '<p class="loading">Finding perfect playlist for you...</p>';
 
     try {
         const response = await fetch('/get_mood_playlist', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ mood, intensity })
+            headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ 
+                mood: mood,
+                intensity: intensity 
+            })
         });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || `Server error: ${response.status}`);
-        }
-        
         const data = await response.json();
-        displayPlaylist(data);
+        
+        if (!response.ok) {
+            throw new Error(data.error || 'Failed to fetch playlist');
+        }
 
+        displayPlaylist(data);
     } catch (error) {
         console.error('Playlist fetch error:', error);
         playlistDisplay.innerHTML = `
-            <p class="error">⚠️ Failed to load playlist: ${error.message}</p>
-            <button onclick="retryPlaylist()" class="retry-btn">Try Again</button>
+            <div class="error">
+                <p>⚠️ Failed to load playlist: ${error.message}</p>
+                <button onclick="retryPlaylist()" class="retry-btn">
+                    <i class="fas fa-sync-alt"></i> Try Again
+                </button>
+            </div>
         `;
     }
 }
@@ -1345,12 +1426,17 @@ async function fetchPlaylist(mood, intensity) {
     
     if (!data || !data.playlist_name) {
         playlistDisplay.innerHTML = `
-            <p class="error">⚠️ No playlist found for this mood</p>
-            <button onclick="retryPlaylist()" class="retry-btn">Try Again</button>
+            <div class="error">
+                <p>⚠️ No playlist data received</p>
+                <button onclick="retryPlaylist()" class="retry-btn">
+                    <i class="fas fa-sync-alt"></i> Try Again
+                </button>
+            </div>
         `;
         return;
     }
     
+    // Build tracks HTML if available
     let tracksHtml = '';
     if (data.sample_tracks && data.sample_tracks.length > 0) {
         tracksHtml = `
@@ -1361,9 +1447,9 @@ async function fetchPlaylist(mood, intensity) {
                         <li>
                             <strong>${track.name}</strong> - ${track.artists}
                             ${track.preview_url ? `
-                                <audio controls>
+                                <audio controls style="width: 100%; margin-top: 5px;">
                                     <source src="${track.preview_url}" type="audio/mpeg">
-                                    Your browser does not support the audio element.
+                                    Your browser does not support audio preview
                                 </audio>
                             ` : '<p class="no-preview">No preview available</p>'}
                         </li>
@@ -1373,10 +1459,12 @@ async function fetchPlaylist(mood, intensity) {
         `;
     }
     
+    // Build the full playlist display
     playlistDisplay.innerHTML = `
         <div class="playlist-card">
             <h3>${data.playlist_name}</h3>
             <p class="playlist-desc">${data.playlist_description}</p>
+            
             ${data.playlist_image ? `
                 <img src="${data.playlist_image}" alt="${data.playlist_name}" class="playlist-img">
             ` : ''}
@@ -1384,7 +1472,7 @@ async function fetchPlaylist(mood, intensity) {
             ${tracksHtml}
             
             <a href="${data.playlist_url}" target="_blank" class="spotify-link">
-                Open in Spotify <i class="fab fa-spotify"></i>
+                <i class="fab fa-spotify"></i> Open in Spotify
             </a>
         </div>
     `;
