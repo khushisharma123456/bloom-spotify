@@ -583,9 +583,15 @@ def get_mood_playlist():
     print("Using playlist:", playlist_info)
 
     # 🎧 Get Spotify playlist details
+   access_token = session.get('spotify_access_token')
+    if not access_token:
+        print("No Spotify access token found in session.")
+        return jsonify({'error': 'Spotify not connected or token expired'}), 401
+
     headers = {
-        'Authorization': f"Bearer {session['spotify_access_token']}"
+        'Authorization': f"Bearer {access_token}"
     }
+
 
     try:
         playlist_url = f"{SPOTIFY_API_BASE}/playlists/{playlist_info['id']}"
