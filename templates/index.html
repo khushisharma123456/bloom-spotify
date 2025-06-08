@@ -1142,26 +1142,39 @@ document.querySelectorAll('.star').forEach(star => {
     });
 });
 
-        // Spotify login button
-        const spotifyLoginBtn = document.getElementById('spotify-login');
-        if (spotifyLoginBtn) {
-            spotifyLoginBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                console.log('Spotify login clicked');
-                window.location.href = '/spotify_login';
-            });
+        // Update the Spotify login button handler
+document.getElementById('spotify-login').addEventListener('click', function(e) {
+    e.preventDefault();
+    console.log('Spotify login clicked');
+    
+    // Open in a new tab for better user experience
+    const spotifyWindow = window.open('/spotify_login', '_blank');
+    
+    // Check for successful login every second
+    const checkLogin = setInterval(async () => {
+        try {
+            const response = await fetch('/check_spotify_status');
+            if (response.ok) {
+                const data = await response.json();
+                if (data.connected) {
+                    clearInterval(checkLogin);
+                    spotifyWindow.close();
+                    location.reload(); // Refresh to show connected state
+                }
+            }
+        } catch (error) {
+            console.error('Error checking login status:', error);
         }
+    }, 1000);
+});
 
-        // Check Spotify connection status
-       async function checkSpotifyStatus() {
+// Update the checkSpotifyStatus function
+async function checkSpotifyStatus() {
     const spotifySection = document.querySelector('.spotify-section');
     
     try {
         const response = await fetch('/check_spotify_status');
-        
-        if (!response.ok) {
-            throw new Error(`Server returned ${response.status}: ${response.statusText}`);
-        }
+        if (!response.ok) throw new Error(`Server error: ${response.status}`);
         
         const data = await response.json();
         
@@ -1179,8 +1192,11 @@ document.querySelectorAll('.star').forEach(star => {
                 <button id="spotify-login" class="spotify-login-btn">
                     <i class="fab fa-spotify"></i> Connect with Spotify
                 </button>
+                <p class="spotify-help">Click to connect your Spotify account</p>
             `;
-            document.getElementById('spotify-login').addEventListener('click', () => {
+            // Re-attach event listener to the new button
+            document.getElementById('spotify-login').addEventListener('click', (e) => {
+                e.preventDefault();
                 window.location.href = '/spotify_login';
             });
         }
