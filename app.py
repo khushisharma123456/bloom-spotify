@@ -193,60 +193,70 @@ def survey():
 
 @app.route('/dashboard')
 def dashboard():
-    if 'user_id' not in session:
-        flash('Please log in first!', 'warning')
-        return redirect(url_for('login'))
+    try:
+        if 'user_id' not in session:
+            flash('Please log in first!', 'warning')
+            return redirect(url_for('login'))
 
-    user = User.query.get(session['user_id'])
+        user = User.query.get(session['user_id'])
+        if not user:
+            flash('User not found!', 'danger')
+            return redirect(url_for('login'))
 
-    if not user.survey_completed:
-        flash('Please complete the survey first!', 'warning')
-        return redirect(url_for('survey'))
+        if not user.survey_completed:
+            flash('Please complete the survey first!', 'warning')
+            return redirect(url_for('survey'))
 
-    # Fetch latest survey response
-    survey = SurveyResponse.query.filter_by(user_id=user.id).order_by(SurveyResponse.timestamp.desc()).first()
+        # Fetch latest survey response
+        survey = SurveyResponse.query.filter_by(user_id=user.id).order_by(SurveyResponse.timestamp.desc()).first()
 
-    if not survey or not survey.q2_last_period:
-        flash('Survey data is missing or incomplete.', 'warning')
-        return redirect(url_for('survey'))
+        if not survey or not survey.q2_last_period:
+            flash('Survey data is missing or incomplete.', 'warning')
+            return redirect(url_for('survey'))
 
-    # Calculate cycle day and phase
-    today = datetime.utcnow().date()
-    days_since_period = (today - survey.q2_last_period).days
-    current_day = (days_since_period % user.cycle_length) + 1 if days_since_period >= 0 else 0
+        # Calculate cycle day and phase
+        today = datetime.utcnow().date()
+        days_since_period = (today - survey.q2_last_period).days
+        current_day = (days_since_period % user.cycle_length) + 1 if days_since_period >= 0 else 0
 
-    if current_day <= user.period_length:
-        current_phase = "Menstrual"
-    elif current_day <= (user.cycle_length - 14):
-        current_phase = "Follicular"
-    elif current_day <= (user.cycle_length - 9):
-        current_phase = "Ovulation"
-    else:
-        current_phase = "Luteal"
-
-    # Check Spotify connection status
-    spotify_connected = False
-    spotify_display_name = None
-    if 'spotify_access_token' in session:
-        if is_spotify_token_valid():
-            spotify_connected = True
-            spotify_display_name = session.get('spotify_display_name', 'Spotify User')
+        if current_day <= user.period_length:
+            current_phase = "Menstrual"
+        elif current_day <= (user.cycle_length - 14):
+            current_phase = "Follicular"
+        elif current_day <= (user.cycle_length - 9):
+            current_phase = "Ovulation"
         else:
-            # Try to refresh token if expired
-            if refresh_spotify_token():
-                spotify_connected = True
-                spotify_display_name = session.get('spotify_display_name', 'Spotify User')
+            current_phase = "Luteal"
 
-    return render_template(
-        'index.html',
-        user_name=session['user_name'],
-        current_day=current_day,
-        current_phase=current_phase,
-        cycle_length=user.cycle_length,
-        period_length=user.period_length,
-        spotify_connected=spotify_connected,
-        spotify_display_name=spotify_display_name
-    )
+        # Check Spotify connection status
+        spotify_connected = False
+        spotify_display_name = None
+        if 'spotify_access_token' in session:
+            try:
+                if is_spotify_token_valid():
+                    spotify_connected = True
+                    spotify_display_name = session.get('spotify_display_name', 'Spotify User')
+                elif 'spotify_refresh_token' in session and refresh_spotify_token():
+                    spotify_connected = True
+                    spotify_display_name = session.get('spotify_display_name', 'Spotify User')
+            except Exception as e:
+                print(f"Error checking Spotify status: {str(e)}")
+
+        return render_template(
+            'index.html',
+            user_name=session['user_name'],
+            current_day=current_day,
+            current_phase=current_phase,
+            cycle_length=user.cycle_length,
+            period_length=user.period_length,
+            spotify_connected=spotify_connected,
+            spotify_display_name=spotify_display_name
+        )
+
+    except Exception as e:
+        print(f"Error in dashboard route: {str(e)}")
+        flash('An error occurred while loading the dashboard. Please try again.', 'danger')
+        return redirect(url_for('login'))
 
     
 # Period Tracker Page (Only for logged-in users)
@@ -389,9 +399,13 @@ def mood():
 
 # Add this function to check Spotify token status
 def is_spotify_token_valid():
-    if 'spotify_token_expiry' not in session:
+    if 'spotify_token_expiry' not in session or 'spotify_access_token' not in session:
         return False
-    return datetime.now() < session['spotify_token_expiry']
+    try:
+        return datetime.now() < session['spotify_token_expiry']
+    except Exception as e:
+        print(f"Error validating token: {str(e)}")
+        return False
 
 # Update the spotify_login route
 @app.route('/spotify_login')
