@@ -1268,15 +1268,18 @@ async function fetchPlaylist(mood, intensity) {
         playlistDisplay.innerHTML = `
             <div class="error">
                 <p>⚠️ Failed to load playlist: ${error.message}</p>
-                <button onclick="retryPlaylist()" class="retry-btn">
-                    <i class="fas fa-sync-alt"></i> Try Again
+                <p>We'll load a default playlist instead.</p>
+                <button onclick="fetchDefaultPlaylist()" class="retry-btn">
+                    <i class="fas fa-sync-alt"></i> Try Default Playlist
                 </button>
             </div>
         `;
     }
 }
 
-
+window.fetchDefaultPlaylist = function() {
+    fetchPlaylist('happy', 3); // Default to happy mood with intensity 3
+}
 
     // Star rating
     document.querySelectorAll('.star').forEach(star => {
