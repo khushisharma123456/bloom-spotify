@@ -1159,7 +1159,7 @@ document.getElementById('spotify-login').addEventListener('click', function(e) {
                 if (data.connected) {
                     clearInterval(checkLogin);
                     spotifyWindow.close();
-                    location.reload(); // Refresh to show connected state
+                    updateSpotifyUI(data.display_name);
                 }
             }
         } catch (error) {
@@ -1167,6 +1167,15 @@ document.getElementById('spotify-login').addEventListener('click', function(e) {
         }
     }, 1000);
 });
+
+// Update the checkSpotifyStatus function
+function updateSpotifyUI(displayName) {
+    const spotifySection = document.querySelector('.spotify-section');
+    spotifySection.innerHTML = `
+        <p>✅ Connected to Spotify as ${displayName || 'user'}</p>
+        <p>Select a mood to get playlist recommendations</p>
+    `;
+}
 
 // Update the checkSpotifyStatus function
 async function checkSpotifyStatus() {
@@ -1183,10 +1192,7 @@ async function checkSpotifyStatus() {
         }
 
         if (data.connected) {
-            spotifySection.innerHTML = `
-                <p>✅ Connected to Spotify as ${data.display_name || 'user'}</p>
-                <p>Select a mood to get playlist recommendations</p>
-            `;
+            updateSpotifyUI(data.display_name);
         } else {
             spotifySection.innerHTML = `
                 <button id="spotify-login" class="spotify-login-btn">
