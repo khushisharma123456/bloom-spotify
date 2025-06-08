@@ -396,14 +396,19 @@ def spotify_login():
     auth_url = f"{SPOTIFY_AUTH_URL}?{urlencode(params)}"
     return redirect(auth_url)
 
-# Update the callback route
+# Update the callback route with better error handling
 @app.route('/callback')
 def spotify_callback():
     if 'error' in request.args:
-        flash('Spotify authorization failed: ' + request.args['error'], 'error')
+        error = request.args.get('error')
+        flash(f'Spotify authorization failed: {error}', 'error')
         return redirect(url_for('dashboard'))
     
-    if 'code' in request.args:
+    if 'code' not in request.args:
+        flash('Authorization code not received from Spotify', 'error')
+        return redirect(url_for('dashboard'))
+    
+    try:
         code = request.args['code']
         
         # Prepare the authorization header
@@ -417,40 +422,45 @@ def spotify_callback():
         }
         
         # Exchange code for access token
-        auth_response = requests.post(SPOTIFY_TOKEN_URL, data={
+        token_data = {
             'grant_type': 'authorization_code',
             'code': code,
             'redirect_uri': SPOTIFY_REDIRECT_URI,
-        }, headers=headers)
+        }
         
-        if auth_response.status_code == 200:
-            auth_data = auth_response.json()
-            
-            # Store tokens in session with expiry time
-            session['spotify_access_token'] = auth_data['access_token']
-            if 'refresh_token' in auth_data:
-                session['spotify_refresh_token'] = auth_data['refresh_token']
-            
-            # Set token expiry time (1 hour from now)
-            session['spotify_token_expiry'] = datetime.now() + timedelta(seconds=auth_data.get('expires_in', 3600))
-            
-            # Get user profile to store display name
-            profile_response = requests.get(
-                f"{SPOTIFY_API_BASE}/me",
-                headers={'Authorization': f"Bearer {auth_data['access_token']}"}
-            )
-            
-            if profile_response.status_code == 200:
-                profile_data = profile_response.json()
-                session['spotify_display_name'] = profile_data.get('display_name', 'Spotify User')
-            
-            flash('Successfully connected with Spotify!', 'success')
-            return redirect(url_for('dashboard'))
-        else:
-            flash('Failed to connect with Spotify. Please try again.', 'error')
-            return redirect(url_for('dashboard'))
+        auth_response = requests.post(SPOTIFY_TOKEN_URL, data=token_data, headers=headers)
+        auth_response.raise_for_status()
+        
+        auth_data = auth_response.json()
+        
+        # Store tokens in session with expiry time
+        session['spotify_access_token'] = auth_data['access_token']
+        if 'refresh_token' in auth_data:
+            session['spotify_refresh_token'] = auth_data['refresh_token']
+        
+        # Set token expiry time (1 hour from now)
+        session['spotify_token_expiry'] = datetime.now() + timedelta(seconds=auth_data.get('expires_in', 3600))
+        
+        # Get user profile to store display name
+        profile_headers = {
+            'Authorization': f"Bearer {auth_data['access_token']}"
+        }
+        profile_response = requests.get(f"{SPOTIFY_API_BASE}/me", headers=profile_headers)
+        profile_response.raise_for_status()
+        
+        profile_data = profile_response.json()
+        session['spotify_display_name'] = profile_data.get('display_name', 'Spotify User')
+        session['spotify_user_id'] = profile_data.get('id')
+        
+        flash('Successfully connected with Spotify!', 'success')
+        return redirect(url_for('dashboard'))
     
-    return redirect(url_for('dashboard'))
+    except requests.exceptions.RequestException as e:
+        flash(f'Failed to connect with Spotify: {str(e)}', 'error')
+        return redirect(url_for('dashboard'))
+    except Exception as e:
+        flash(f'Unexpected error: {str(e)}', 'error')
+        return redirect(url_for('dashboard'))
 
 # Update the refresh token route
 @app.route('/refresh_token')
