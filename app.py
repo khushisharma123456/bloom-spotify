@@ -203,7 +203,7 @@ def dashboard():
         flash('Please complete the survey first!', 'warning')
         return redirect(url_for('survey'))
 
-    # ⬇️ Fetch latest survey response
+    # Fetch latest survey response
     survey = SurveyResponse.query.filter_by(user_id=user.id).order_by(SurveyResponse.timestamp.desc()).first()
 
     if not survey or not survey.q2_last_period:
@@ -224,13 +224,28 @@ def dashboard():
     else:
         current_phase = "Luteal"
 
+    # Check Spotify connection status
+    spotify_connected = False
+    spotify_display_name = None
+    if 'spotify_access_token' in session:
+        if is_spotify_token_valid():
+            spotify_connected = True
+            spotify_display_name = session.get('spotify_display_name', 'Spotify User')
+        else:
+            # Try to refresh token if expired
+            if refresh_spotify_token():
+                spotify_connected = True
+                spotify_display_name = session.get('spotify_display_name', 'Spotify User')
+
     return render_template(
         'index.html',
         user_name=session['user_name'],
         current_day=current_day,
         current_phase=current_phase,
         cycle_length=user.cycle_length,
-        period_length=user.period_length
+        period_length=user.period_length,
+        spotify_connected=spotify_connected,
+        spotify_display_name=spotify_display_name
     )
 
     
