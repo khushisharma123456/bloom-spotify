@@ -583,7 +583,7 @@ def get_mood_playlist():
     print("Using playlist:", playlist_info)
 
     # 🎧 Get Spotify playlist details
-   access_token = session.get('spotify_access_token')
+    access_token = session.get('spotify_access_token')
     if not access_token:
         print("No Spotify access token found in session.")
         return jsonify({'error': 'Spotify not connected or token expired'}), 401
