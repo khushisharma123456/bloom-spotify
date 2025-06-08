@@ -553,7 +553,7 @@ def get_mood_playlist():
         mood = data.get('mood', 'happy').lower()
         intensity = int(data.get('intensity', 3))
 
-        # Enhanced playlist mapping with more options
+        # Enhanced playlist mapping with fallback options
         mood_playlists = {
             'happy': {
                 1: {'id': '37i9dQZF1DXdPec7aLTmlC', 'name': 'Happy Hits', 'description': 'Feel-good favorites'},
@@ -579,9 +579,9 @@ def get_mood_playlist():
             'energetic': {
                 1: {'id': '37i9dQZF1DX76Wlfdnj7AP', 'name': 'Beast Mode', 'description': 'High-energy workout music'},
                 2: {'id': '37i9dQZF1DX70RN3TfWWJh', 'name': 'Workout', 'description': 'Powerful workout tracks'},
-                3: {'id': '37i9dQZF1DX8f6LHxMjnzD', 'name': 'Pump Up', 'description': 'Music to get you pumped'},
+                3: {'id': '37i9dQZF1DX0UrRvztWcAU', 'name': 'Wake Up Happy', 'description': 'Upbeat morning playlist'},
                 4: {'id': '37i9dQZF1DX9vYRBO9gjDe', 'name': 'Spotify Singles: Covers', 'description': 'Unique cover versions'},
-                5: {'id': '37i9dQZF1DXcBWIGoYBM5M', 'name': 'Todays Top Hits', 'description': 'Current popular hits'}
+                5: {'id': '37i9dQZF1DXcBWIGoYBM5M', 'name': 'Today Top Hits', 'description': 'Current popular hits'}
             }
         }
 
@@ -595,11 +595,24 @@ def get_mood_playlist():
             'Content-Type': 'application/json'
         }
 
-        # Get playlist details
-        playlist_url = f"{SPOTIFY_API_BASE}/playlists/{playlist_info['id']}"
-        playlist_response = requests.get(playlist_url, headers=headers)
-        playlist_response.raise_for_status()
-        playlist_data = playlist_response.json()
+        # First try to get playlist details
+        try:
+            playlist_url = f"{SPOTIFY_API_BASE}/playlists/{playlist_info['id']}"
+            playlist_response = requests.get(playlist_url, headers=headers)
+            playlist_response.raise_for_status()
+            playlist_data = playlist_response.json()
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 404:
+                # If playlist not found, try the fallback playlist
+                fallback_id = '37i9dQZF1DXcBWIGoYBM5M'  # Today's Top Hits as fallback
+                playlist_url = f"{SPOTIFY_API_BASE}/playlists/{fallback_id}"
+                playlist_response = requests.get(playlist_url, headers=headers)
+                playlist_response.raise_for_status()
+                playlist_data = playlist_response.json()
+                playlist_info['name'] = playlist_data['name']
+                playlist_info['description'] = "Popular playlist (original not available in your region)"
+            else:
+                raise
 
         # Get tracks
         tracks_url = f"{SPOTIFY_API_BASE}/playlists/{playlist_info['id']}/tracks?limit=3"
