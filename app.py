@@ -512,9 +512,10 @@ def get_mood_playlist():
     # Check Spotify token status
     if not is_spotify_token_valid():
         if 'spotify_refresh_token' in session:
-            refresh_response = refresh_token()
-            if refresh_response.status_code != 200:
+            refresh_success = refresh_spotify_token()
+            if not refresh_success:
                 return jsonify({'error': 'Spotify session expired. Please reconnect.'}), 401
+
         else:
             return jsonify({'error': 'Spotify not connected'}), 401
     
