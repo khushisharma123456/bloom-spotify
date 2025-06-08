@@ -529,6 +529,52 @@
             text-align: center;
             display: none;
         }
+        .playlist-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 15px;
+    text-align: left;
+}
+
+.playlist-img {
+    max-width: 200px;
+    border-radius: 8px;
+    margin: 10px auto;
+    display: block;
+}
+
+.tracks {
+    margin: 15px 0;
+}
+
+.tracks ul {
+    list-style: none;
+    padding: 0;
+}
+
+.tracks li {
+    padding: 10px;
+    margin: 5px 0;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+}
+
+.spotify-link {
+    display: inline-block;
+    background: #1DB954;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 20px;
+    text-decoration: none;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+}
+
+.spotify-link:hover {
+    background: #1ed760;
+    transform: scale(1.05);
+}
 
         /* Spotify Section */
         .spotify-section {
@@ -1028,27 +1074,39 @@
         </div>
         
         <!-- Mood and Spotify Section -->
-        <div class="mood-spotify-section">
-            <h2>How are you feeling today?</h2>
-            <div class="mood-selector">
-                <div class="mood-option" data-mood="happy">😃</div>
-                <div class="mood-option" data-mood="sad">😞</div>
-                <div class="mood-option" data-mood="angry">😡</div>
-                <div class="mood-option" data-mood="energetic">⚡</div>
-            </div>
+        <!-- Mood and Spotify Section -->
+<div class="mood-spotify-section">
+    <h2>How are you feeling today?</h2>
+    <div class="mood-selector">
+        <div class="mood-option" data-mood="happy">😃</div>
+        <div class="mood-option" data-mood="sad">😞</div>
+        <div class="mood-option" data-mood="angry">😡</div>
+        <div class="mood-option" data-mood="energetic">⚡</div>
+    </div>
 
-            <div class="star-rating">
-                <span class="star" data-rating="1">★</span>
-                <span class="star" data-rating="2">★</span>
-                <span class="star" data-rating="3">★</span>
-                <span class="star" data-rating="4">★</span>
-                <span class="star" data-rating="5">★</span>
-            </div>
+    <div class="star-rating">
+        <span class="star" data-rating="1">★</span>
+        <span class="star" data-rating="2">★</span>
+        <span class="star" data-rating="3">★</span>
+        <span class="star" data-rating="4">★</span>
+        <span class="star" data-rating="5">★</span>
+    </div>
 
-            <div class="spotify-section">
-                <button id="spotify-login" class="spotify-login-btn">
-    <i class="fab fa-spotify"></i> Connect with Spotify
-</button>
+    <div class="spotify-section">
+        {% if spotify_connected %}
+            <p>✅ Connected to Spotify as {{ spotify_display_name }}</p>
+            <p>Select a mood and intensity to get playlist recommendations</p>
+            <div id="playlistDisplay" class="playlist-display">
+                <!-- Playlist will be displayed here -->
+            </div>
+        {% else %}
+            <button id="spotify-login" class="spotify-login-btn">
+                <i class="fab fa-spotify"></i> Connect with Spotify
+            </button>
+            <p class="spotify-help">Click to connect your Spotify account</p>
+        {% endif %}
+    </div>
+</div>
                 <div id="playlistDisplay" class="playlist-display"></div>
             </div>
         </div>
@@ -1088,7 +1146,8 @@ document.querySelectorAll('.mood-option').forEach(option => {
     });
 });
 
-    async function fetchPlaylist(mood, intensity) {
+    // Update the fetchPlaylist function to handle the response better
+async function fetchPlaylist(mood, intensity) {
     const playlistDisplay = document.getElementById('playlistDisplay');
     playlistDisplay.innerHTML = '<p class="loading">Finding perfect playlist...</p>';
 
@@ -1101,6 +1160,11 @@ document.querySelectorAll('.mood-option').forEach(option => {
 
         if (!response.ok) throw new Error(`Server error: ${response.status}`);
         const data = await response.json();
+        
+        if (data.error) {
+            throw new Error(data.error);
+        }
+        
         displayPlaylist(data);
 
     } catch (error) {
@@ -1258,48 +1322,53 @@ document.querySelectorAll('.mood-option').forEach(option => {
 
     // Display playlist results
     function displayPlaylist(data) {
-        const playlistDisplay = document.getElementById('playlistDisplay');
-        
-        if (!data || !data.playlist_name) {
-            playlistDisplay.innerHTML = `
-                <p class="error">⚠️ No playlist found for this mood</p>
-                <button onclick="retryPlaylist()" class="retry-btn">Try Again</button>
-            `;
-            return;
-        }
-        
+    const playlistDisplay = document.getElementById('playlistDisplay');
+    
+    if (!data || !data.playlist_name) {
         playlistDisplay.innerHTML = `
-            <div class="playlist-card">
-                <h3>${data.playlist_name}</h3>
-                <p class="playlist-desc">${data.playlist_description}</p>
-                ${data.playlist_image ? `
-                    <img src="${data.playlist_image}" alt="${data.playlist_name}" class="playlist-img">
-                ` : ''}
-                
-                <div class="tracks">
-                    ${data.sample_tracks && data.sample_tracks.length > 0 ? `
-                        <h4>Sample Tracks:</h4>
-                        <ul>
-                            ${data.sample_tracks.map(track => `
-                                <li>
-                                    <strong>${track.name}</strong> - ${track.artists}
-                                    ${track.preview_url ? `
-                                        <audio controls>
-                                            <source src="${track.preview_url}" type="audio/mpeg">
-                                        </audio>
-                                    ` : ''}
-                                </li>
-                            `).join('')}
-                        </ul>
-                    ` : ''}
-                </div>
-                
-                <a href="${data.playlist_url}" target="_blank" class="spotify-link">
-                    Open in Spotify <i class="fab fa-spotify"></i>
-                </a>
+            <p class="error">⚠️ No playlist found for this mood</p>
+            <button onclick="retryPlaylist()" class="retry-btn">Try Again</button>
+        `;
+        return;
+    }
+    
+    let tracksHtml = '';
+    if (data.sample_tracks && data.sample_tracks.length > 0) {
+        tracksHtml = `
+            <div class="tracks">
+                <h4>Sample Tracks:</h4>
+                <ul>
+                    ${data.sample_tracks.map(track => `
+                        <li>
+                            <strong>${track.name}</strong> - ${track.artists}
+                            ${track.preview_url ? `
+                                <audio controls>
+                                    <source src="${track.preview_url}" type="audio/mpeg">
+                                </audio>
+                            ` : ''}
+                        </li>
+                    `).join('')}
+                </ul>
             </div>
         `;
     }
+    
+    playlistDisplay.innerHTML = `
+        <div class="playlist-card">
+            <h3>${data.playlist_name}</h3>
+            <p class="playlist-desc">${data.playlist_description}</p>
+            ${data.playlist_image ? `
+                <img src="${data.playlist_image}" alt="${data.playlist_name}" class="playlist-img">
+            ` : ''}
+            
+            ${tracksHtml}
+            
+            <a href="${data.playlist_url}" target="_blank" class="spotify-link">
+                Open in Spotify <i class="fab fa-spotify"></i>
+            </a>
+        </div>
+    `;
+}
 
     // Retry playlist function
     window.retryPlaylist = function() {
