@@ -508,21 +508,18 @@ def get_mood_playlist():
     if 'user_id' not in session:
         return jsonify({'error': 'User not logged in'}), 401
 
-    # 🔐 Check if Spotify access token exists and is valid
+    # Ensure the token is valid or refresh it
     if 'spotify_access_token' not in session or not is_spotify_token_valid():
-        print("Spotify access token missing or expired.")
-
+        print("Spotify token is missing or expired.")
         if 'spotify_refresh_token' in session:
-            print("Attempting to refresh token...")
-            refresh_success = refresh_spotify_token()
-            if not refresh_success:
-                print("Token refresh failed.")
+            print("Attempting to refresh Spotify token...")
+            success = refresh_spotify_token()
+            if not success:
                 return jsonify({'error': 'Spotify session expired. Please reconnect.'}), 401
         else:
-            print("Spotify not connected.")
             return jsonify({'error': 'Spotify not connected'}), 401
 
-    # 🧠 Get mood & intensity from frontend
+    # Get mood and intensity from the request
     data = request.get_json()
     mood = data.get('mood')
     intensity = data.get('intensity', 3)
@@ -530,92 +527,46 @@ def get_mood_playlist():
     if not mood:
         return jsonify({'error': 'Mood not specified'}), 400
 
-    # 🎧 Playlist mappings
+    # Map mood and intensity to playlist
     mood_playlists = {
         'happy': {
-            1: {'id': '37i9dQZF1DXdPec7aLTmlC', 'name': 'Happy Hits', 'description': 'Light and cheerful tunes to maintain your happiness'},
-            2: {'id': '37i9dQZF1DX3rxVfibe1L0', 'name': 'Mood Booster', 'description': 'Songs scientifically proven to boost your mood'},
-            3: {'id': '37i9dQZF1DX0XUsuxWHRQd', 'name': 'RapCaviar', 'description': 'High-energy hip-hop to keep your spirits high'},
-            4: {'id': '37i9dQZF1DX4dyzvuaRJ0n', 'name': 'mint', 'description': 'Fresh dance and electronic music to elevate your mood'},
-            5: {'id': '37i9dQZF1DX4SBhb3fqCJd', 'name': 'Are & Be', 'description': 'The best in uplifting R&B right now'}
+            3: {'id': '37i9dQZF1DX0XUsuxWHRQd', 'name': 'RapCaviar', 'description': 'High-energy hip-hop to keep your spirits high'}
         },
         'sad': {
-            1: {'id': '37i9dQZF1DX7qK8ma5wgG1', 'name': 'Comforting Melodies', 'description': 'Gentle songs to comfort you in tough times'},
-            2: {'id': '37i9dQZF1DWVV27DiNWxkR', 'name': 'Indie Comfort', 'description': 'Indie songs that understand what you\'re feeling'},
-            3: {'id': '37i9dQZF1DX3YSRoSdA634', 'name': 'Life Sucks', 'description': 'Songs that get it when you\'re feeling down'},
-            4: {'id': '37i9dQZF1DX1s9knjP51Oa', 'name': 'Calm Vibes', 'description': 'Soothing music to help you relax and recover'},
-            5: {'id': '37i9dQZF1DX3rxVfibe1L0', 'name': 'Mood Booster', 'description': 'Songs to help lift you out of sadness'}
+            3: {'id': '37i9dQZF1DX3rxVfibe1L0', 'name': 'Mood Booster', 'description': 'Songs to help lift you out of sadness'}
         },
         'angry': {
-            1: {'id': '37i9dQZF1DX0vHZ8elq0UK', 'name': 'Rock This', 'description': 'Classic rock anthems to channel your energy'},
-            2: {'id': '37i9dQZF1DX1s9knjP51Oa', 'name': 'Calm Vibes', 'description': 'Soothing instrumental music to calm your mind'},
-            3: {'id': '37i9dQZF1DX4sWSpwq3LiO', 'name': 'Rock Classics', 'description': 'Legendary rock tracks to help you release tension'},
-            4: {'id': '37i9dQZF1DWU0ScTcjJBdj', 'name': 'Relax & Unwind', 'description': 'Music to help you relax and let go of anger'},
-            5: {'id': '37i9dQZF1DX5wgkQjaJeZO', 'name': 'Thrash Metal', 'description': 'High-intensity metal for when you need to vent'}
-        },
-        'energetic': {
-            1: {'id': '37i9dQZF1DX9tPFwDMOaN1', 'name': 'Energy Booster', 'description': 'Upbeat tracks to get you moving'},
-            2: {'id': '37i9dQZF1DX76Wlfdnj7AP', 'name': 'Beast Mode', 'description': 'High-energy workout music'},
-            3: {'id': '37i9dQZF1DX0XUsuxWHRQd', 'name': 'RapCaviar', 'description': 'The hottest hip-hop tracks'},
-            4: {'id': '37i9dQZF1DX8f6LHxMjnzD', 'name': 'Punk Rock', 'description': 'Fast and furious punk anthems'},
-            5: {'id': '37i9dQZF1DXa2SPUyWl8Y5', 'name': 'Cardio', 'description': 'High-energy tracks to keep you pumped'}
+            3: {'id': '37i9dQZF1DX4SBhb3fqCJd', 'name': 'Are & Be', 'description': 'Uplifting R&B'}
         },
         'content': {
-            1: {'id': '37i9dQZF1DX4WYpdgoIcn6', 'name': 'Chill Hits', 'description': 'Relaxed vibes for easy listening'},
-            2: {'id': '37i9dQZF1DX7qK8ma5wgG1', 'name': 'Peaceful Piano', 'description': 'Calming piano music for relaxation'},
-            3: {'id': '37i9dQZF1DWU0ScTcjJBdj', 'name': 'Relax & Unwind', 'description': 'Soothing sounds to calm your mind'},
-            4: {'id': '37i9dQZF1DX4WYpdgoIcn6', 'name': 'Chill Hits', 'description': 'Relaxed vibes for easy listening'},
-            5: {'id': '37i9dQZF1DX4WYpdgoIcn6', 'name': 'Chill Hits', 'description': 'Relaxed vibes for easy listening'}
+            3: {'id': '37i9dQZF1DX4WYpdgoIcn6', 'name': 'Chill Hits', 'description': 'Relaxed vibes for easy listening'}
+        },
+        'energetic': {
+            3: {'id': '37i9dQZF1DX76Wlfdnj7AP', 'name': 'Beast Mode', 'description': 'High-energy workout music'}
         }
     }
 
-    # 🧠 Adjust mood mapping if user is very sad or angry
-    if mood.lower() == 'sad' and intensity >= 4:
-        playlist_info = mood_playlists['happy'].get(3)
-    elif mood.lower() == 'angry' and intensity >= 4:
-        playlist_info = mood_playlists['content'].get(2)
-    else:
-        playlist_info = mood_playlists.get(mood.lower(), {}).get(int(intensity))
-
+    playlist_info = mood_playlists.get(mood.lower(), {}).get(intensity)
     if not playlist_info:
         return jsonify({'error': 'No playlist found for this mood'}), 404
 
-    print("Using playlist:", playlist_info)
-
-    # 🎧 Get Spotify playlist details
     access_token = session.get('spotify_access_token')
     if not access_token:
-        print("No Spotify access token found in session.")
-        return jsonify({'error': 'Spotify not connected or token expired'}), 401
+        return jsonify({'error': 'Spotify access token not found'}), 401
 
     headers = {
         'Authorization': f"Bearer {access_token}"
     }
-
 
     try:
         playlist_url = f"{SPOTIFY_API_BASE}/playlists/{playlist_info['id']}"
         response = requests.get(playlist_url, headers=headers)
 
         if response.status_code != 200:
+            print("Spotify API response:", response.text)
             return jsonify({'error': 'Failed to get playlist from Spotify'}), 500
 
         playlist_data = response.json()
-
-        # Get sample tracks (top 3)
-        tracks_url = f"{SPOTIFY_API_BASE}/playlists/{playlist_info['id']}/tracks?limit=5"
-        tracks_response = requests.get(tracks_url, headers=headers)
-        tracks_data = tracks_response.json() if tracks_response.status_code == 200 else {'items': []}
-
-        sample_tracks = []
-        for item in tracks_data.get('items', [])[:3]:
-            track = item.get('track', {})
-            artists = ", ".join([artist['name'] for artist in track.get('artists', [])])
-            sample_tracks.append({
-                'name': track.get('name', 'Unknown Track'),
-                'artists': artists,
-                'preview_url': track.get('preview_url')
-            })
 
         return jsonify({
             'playlist_id': playlist_info['id'],
@@ -623,15 +574,11 @@ def get_mood_playlist():
             'playlist_description': playlist_info['description'],
             'playlist_url': playlist_data.get('external_urls', {}).get('spotify', ''),
             'playlist_image': playlist_data.get('images', [{}])[0].get('url', ''),
-            'tracks': playlist_data.get('tracks', {}).get('total', 0),
-            'sample_tracks': sample_tracks,
-            'owner': playlist_data.get('owner', {}).get('display_name', 'Spotify'),
-            'original_mood': mood,
-            'original_intensity': intensity
+            'owner': playlist_data.get('owner', {}).get('display_name', 'Spotify')
         })
 
     except Exception as e:
-        print("ERROR in get_mood_playlist:", str(e))
+        print("Error in /get_mood_playlist:", str(e))
         return jsonify({'error': str(e)}), 500
 
 
