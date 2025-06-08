@@ -503,30 +503,34 @@ def refresh_spotify_token():
 
 
 # Update the get_mood_playlist route in app.py
-# Update the get_mood_playlist route in app.py
 @app.route('/get_mood_playlist', methods=['POST'])
 def get_mood_playlist():
     if 'user_id' not in session:
         return jsonify({'error': 'User not logged in'}), 401
-    
-    # Check Spotify token status
-    if not is_spotify_token_valid():
+
+    # 🔐 Check if Spotify access token exists and is valid
+    if 'spotify_access_token' not in session or not is_spotify_token_valid():
+        print("Spotify access token missing or expired.")
+
         if 'spotify_refresh_token' in session:
+            print("Attempting to refresh token...")
             refresh_success = refresh_spotify_token()
             if not refresh_success:
+                print("Token refresh failed.")
                 return jsonify({'error': 'Spotify session expired. Please reconnect.'}), 401
-
         else:
+            print("Spotify not connected.")
             return jsonify({'error': 'Spotify not connected'}), 401
-    
+
+    # 🧠 Get mood & intensity from frontend
     data = request.get_json()
     mood = data.get('mood')
     intensity = data.get('intensity', 3)
-    
+
     if not mood:
         return jsonify({'error': 'Mood not specified'}), 400
-    
-    # Enhanced mood to playlist mapping with mood improvement paths
+
+    # 🎧 Playlist mappings
     mood_playlists = {
         'happy': {
             1: {'id': '37i9dQZF1DXdPec7aLTmlC', 'name': 'Happy Hits', 'description': 'Light and cheerful tunes to maintain your happiness'},
@@ -564,41 +568,39 @@ def get_mood_playlist():
             5: {'id': '37i9dQZF1DX4WYpdgoIcn6', 'name': 'Chill Hits', 'description': 'Relaxed vibes for easy listening'}
         }
     }
-    
-    # If mood is negative (sad/angry), consider suggesting a path to better mood
+
+    # 🧠 Adjust mood mapping if user is very sad or angry
     if mood.lower() == 'sad' and intensity >= 4:
-        # For high-intensity sadness, suggest happy playlists
-        playlist_info = mood_playlists['happy'].get(3)  # Default to medium happy
+        playlist_info = mood_playlists['happy'].get(3)
     elif mood.lower() == 'angry' and intensity >= 4:
-        # For high-intensity anger, suggest calming playlists
-        playlist_info = mood_playlists['content'].get(2)  # Default to medium calm
+        playlist_info = mood_playlists['content'].get(2)
     else:
-        # Otherwise use the requested mood
-        playlist_info = mood_playlists.get(mood.lower(), {}).get(int(intensity), None)
-    
+        playlist_info = mood_playlists.get(mood.lower(), {}).get(int(intensity))
+
     if not playlist_info:
         return jsonify({'error': 'No playlist found for this mood'}), 404
-    
-    # Get playlist details from Spotify
+
+    print("Using playlist:", playlist_info)
+
+    # 🎧 Get Spotify playlist details
     headers = {
         'Authorization': f"Bearer {session['spotify_access_token']}"
     }
-    
+
     try:
-        # Get playlist details
         playlist_url = f"{SPOTIFY_API_BASE}/playlists/{playlist_info['id']}"
         response = requests.get(playlist_url, headers=headers)
-        
+
         if response.status_code != 200:
             return jsonify({'error': 'Failed to get playlist from Spotify'}), 500
-        
+
         playlist_data = response.json()
-        
-        # Get a few sample tracks
+
+        # Get sample tracks (top 3)
         tracks_url = f"{SPOTIFY_API_BASE}/playlists/{playlist_info['id']}/tracks?limit=5"
         tracks_response = requests.get(tracks_url, headers=headers)
         tracks_data = tracks_response.json() if tracks_response.status_code == 200 else {'items': []}
-        
+
         sample_tracks = []
         for item in tracks_data.get('items', [])[:3]:
             track = item.get('track', {})
@@ -608,7 +610,7 @@ def get_mood_playlist():
                 'artists': artists,
                 'preview_url': track.get('preview_url')
             })
-        
+
         return jsonify({
             'playlist_id': playlist_info['id'],
             'playlist_name': playlist_info['name'],
@@ -621,9 +623,11 @@ def get_mood_playlist():
             'original_mood': mood,
             'original_intensity': intensity
         })
-        
+
     except Exception as e:
+        print("ERROR in get_mood_playlist:", str(e))
         return jsonify({'error': str(e)}), 500
+
 
 # Add this route to check Spotify connection status
 @app.route('/check_spotify_status')
