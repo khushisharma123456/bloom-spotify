@@ -466,7 +466,6 @@ def spotify_callback():
         return redirect(url_for('dashboard'))
 
 # Update the refresh token route
-@app.route('/refresh_token')
 def refresh_spotify_token():
     if 'spotify_refresh_token' not in session:
         return False
@@ -501,6 +500,7 @@ def refresh_spotify_token():
     except Exception as e:
         print(f"Error refreshing token: {str(e)}")
         return False
+
 
 # Update the get_mood_playlist route in app.py
 # Update the get_mood_playlist route in app.py
