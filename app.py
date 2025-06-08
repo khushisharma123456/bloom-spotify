@@ -539,7 +539,10 @@ def get_mood_playlist():
             return jsonify({'error': 'User not logged in'}), 401
 
         # Ensure valid Spotify token
-        if 'spotify_access_token' not in session or not is_spotify_token_valid():
+        if 'spotify_access_token' not in session:
+            return jsonify({'error': 'Spotify not connected'}), 401
+            
+        if not is_spotify_token_valid():
             if 'spotify_refresh_token' in session:
                 if not refresh_spotify_token():
                     return jsonify({'error': 'Spotify session expired. Please reconnect.'}), 401
@@ -556,7 +559,7 @@ def get_mood_playlist():
                 1: {'id': '37i9dQZF1DXdPec7aLTmlC', 'name': 'Happy Hits', 'description': 'Feel-good favorites'},
                 2: {'id': '37i9dQZF1DX9u7XXOp0l5L', 'name': 'Happy Beats', 'description': 'Upbeat tunes to boost your mood'},
                 3: {'id': '37i9dQZF1DX0XUsuxWHRQd', 'name': 'RapCaviar', 'description': 'High-energy hip-hop'},
-                4: {'id': '37i9dQZF1DX1lVhptIYRda', 'name': 'Hot Country', 'description': 'Today\'s top country hits'},
+                4: {'id': '37i9dQZF1DX1lVhptIYRda', 'name': 'Hot Country', 'description': "Today's top country hits"},
                 5: {'id': '37i9dQZF1DX4dyzvuaRJ0n', 'name': 'Mint', 'description': 'The freshest dance hits'}
             },
             'sad': {
@@ -569,7 +572,7 @@ def get_mood_playlist():
             'angry': {
                 1: {'id': '37i9dQZF1DX4SBhb3fqCJd', 'name': 'Are & Be', 'description': 'Uplifting R&B'},
                 2: {'id': '37i9dQZF1DX6aTaZa0K6VA', 'name': 'Pop Punk Powerhouses', 'description': 'High-energy pop punk'},
-                3: {'id': '37i9dQZF1DX5kjCvsC5isB', 'name': 'Rock This', 'description': 'Today\'s rock hits'},
+                3: {'id': '37i9dQZF1DX5kjCvsC5isB', 'name': 'Rock This', 'description': "Today's rock hits"},
                 4: {'id': '37i9dQZF1DX5Ejj0EkURtP', 'name': 'All Out 2010s', 'description': 'Biggest songs of the 2010s'},
                 5: {'id': '37i9dQZF1DX4o1oenSJRJd', 'name': 'All Out 2000s', 'description': 'Throwback hits'}
             },
@@ -587,32 +590,31 @@ def get_mood_playlist():
         if not playlist_info:
             return jsonify({'error': 'No playlist found for this mood/intensity'}), 404
 
-        # Get playlist details from Spotify
         headers = {
-            'Authorization': f"Bearer {session['spotify_access_token']}"
+            'Authorization': f"Bearer {session['spotify_access_token']}",
+            'Content-Type': 'application/json'
         }
+
+        # Get playlist details
         playlist_url = f"{SPOTIFY_API_BASE}/playlists/{playlist_info['id']}"
         playlist_response = requests.get(playlist_url, headers=headers)
-        
-        if playlist_response.status_code != 200:
-            return jsonify({'error': f'Failed to get playlist from Spotify: {playlist_response.text}'}), 500
-
+        playlist_response.raise_for_status()
         playlist_data = playlist_response.json()
 
-        # Get sample tracks (first 3 tracks)
+        # Get tracks
         tracks_url = f"{SPOTIFY_API_BASE}/playlists/{playlist_info['id']}/tracks?limit=3"
         tracks_response = requests.get(tracks_url, headers=headers)
-        
+        tracks_response.raise_for_status()
+        tracks_data = tracks_response.json()
+
         sample_tracks = []
-        if tracks_response.status_code == 200:
-            tracks_data = tracks_response.json()
-            for item in tracks_data.get('items', [])[:3]:
-                track = item.get('track', {})
-                sample_tracks.append({
-                    'name': track.get('name', 'Unknown Track'),
-                    'artists': ', '.join([artist['name'] for artist in track.get('artists', [])]),
-                    'preview_url': track.get('preview_url')
-                })
+        for item in tracks_data.get('items', [])[:3]:
+            track = item.get('track', {})
+            sample_tracks.append({
+                'name': track.get('name', 'Unknown Track'),
+                'artists': ', '.join([artist['name'] for artist in track.get('artists', [])]),
+                'preview_url': track.get('preview_url')
+            })
 
         return jsonify({
             'playlist_name': playlist_info['name'],
@@ -622,9 +624,12 @@ def get_mood_playlist():
             'sample_tracks': sample_tracks
         })
 
+    except requests.exceptions.RequestException as e:
+        print(f"Spotify API error: {str(e)}")
+        return jsonify({'error': f'Spotify API error: {str(e)}'}), 500
     except Exception as e:
-        print(f"Error in get_mood_playlist: {str(e)}")
-        return jsonify({'error': str(e)}), 500
+        print(f"Unexpected error: {str(e)}")
+        return jsonify({'error': f'Unexpected error: {str(e)}'}), 500
 
 
 # Add this route to check Spotify connection status
