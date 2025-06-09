@@ -1245,7 +1245,8 @@ async function fetchPlaylist(mood, intensity) {
     try {
         playlistDisplay.innerHTML = '<p class="loading">Finding perfect playlist for you...</p>';
         
-        const response = await fetch('/get_mood_playlist', {
+        const response = await fetch('https://bloom-spotify.onrender.com/get_mood_playlist', {
+
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ mood, intensity })
@@ -1334,36 +1335,41 @@ window.fetchDefaultPlaylist = function() {
     });
 
     // Spotify login button handler
-    document.getElementById('spotify-login').addEventListener('click', function(e) {
-    e.preventDefault();
-    
-    // Store current mood and intensity
-    const selectedMood = document.querySelector('.mood-option.selected')?.dataset.mood || 'happy';
-    const intensity = document.querySelectorAll('.star.active').length || 3;
-    sessionStorage.setItem('pendingMood', selectedMood);
-    sessionStorage.setItem('pendingIntensity', intensity);
-    
-    // Open login window
-    window.open('/spotify_login', '_blank', 'width=500,height=700');
-});
+    const loginBtn = document.getElementById('spotify-login');
+if (loginBtn) {
+    loginBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        const selectedMood = document.querySelector('.mood-option.selected')?.dataset.mood || 'happy';
+        const intensity = document.querySelectorAll('.star.active').length || 3;
+        sessionStorage.setItem('pendingMood', selectedMood);
+        sessionStorage.setItem('pendingIntensity', intensity);
+
+        window.open('/spotify_login', '_blank', 'width=500,height=700');
+    });
+}
+
 
 // Add this to check for pending mood after connection
-function checkSpotifyStatus() {
-    // ... existing code ...
-    
-    if (data.connected) {
-        updateSpotifyUI(data.display_name);
-        
-        // Check for pending mood selection
-        const pendingMood = sessionStorage.getItem('pendingMood');
-        const pendingIntensity = sessionStorage.getItem('pendingIntensity');
-        if (pendingMood && pendingIntensity) {
-            fetchPlaylist(pendingMood, pendingIntensity);
-            sessionStorage.removeItem('pendingMood');
-            sessionStorage.removeItem('pendingIntensity');
+async function checkSpotifyStatus() {
+    try {
+        const response = await fetch('/check_spotify_status');
+        const data = await response.json();
+        if (data.connected) {
+            updateSpotifyUI(data.display_name);
+            const pendingMood = sessionStorage.getItem('pendingMood');
+            const pendingIntensity = sessionStorage.getItem('pendingIntensity');
+            if (pendingMood && pendingIntensity) {
+                fetchPlaylist(pendingMood, pendingIntensity);
+                sessionStorage.removeItem('pendingMood');
+                sessionStorage.removeItem('pendingIntensity');
+            }
         }
+    } catch (err) {
+        console.error('Spotify status check failed', err);
     }
 }
+
 
     // Update Spotify UI when connected
     function updateSpotifyUI(displayName) {
