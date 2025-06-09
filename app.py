@@ -602,7 +602,7 @@ def get_mood_playlist():
         }
 
         # First try to get playlist details
-         playlist_info = mood_playlists.get(mood, {}).get(intensity)
+        playlist_info = mood_playlists.get(mood, {}).get(intensity)
         if not playlist_info:
             return jsonify({'error': 'No playlist found for this mood/intensity'}), 404
 
