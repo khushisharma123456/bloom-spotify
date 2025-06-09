@@ -401,17 +401,17 @@ def mood():
 from datetime import datetime, timedelta, timezone
 
 def is_spotify_token_valid():
-    if 'spotify_token_expiry' not in session or 'spotify_access_token' not in session:
+    if 'spotify_access_token' not in session:
         return False
-    try:
-        # Make both datetimes timezone-aware
-        expiry_time = session['spotify_token_expiry']
-        if expiry_time.tzinfo is None:
-            expiry_time = expiry_time.replace(tzinfo=timezone.utc)
-        return datetime.now(timezone.utc) < expiry_time
-    except Exception as e:
-        print(f"Error validating token: {str(e)}")
+    if 'spotify_token_expiry' not in session:
         return False
+        
+    # Make sure expiry time is timezone-aware
+    expiry_time = session['spotify_token_expiry']
+    if expiry_time.tzinfo is None:
+        expiry_time = expiry_time.replace(tzinfo=timezone.utc)
+        
+    return datetime.now(timezone.utc) < expiry_time
 
 # Update the spotify_login route
 @app.route('/spotify_login')
@@ -665,8 +665,28 @@ def get_mood_playlist():
     except Exception as e:
         print(f"Unexpected error: {str(e)}")
         return jsonify({'error': f'Unexpected error: {str(e)}'}), 500
+#================================================================================================
 
+fallback_playlists = {
+    'happy': '37i9dQZF1DXdPec7aLTmlC',  # Happy Hits
+    'sad': '37i9dQZF1DX7qK8ma5wgG1',    # Sad Songs
+    'angry': '37i9dQZF1DX4SBhb3fqCJd',   # Are & Be
+    'energetic': '37i9dQZF1DX76Wlfdnj7AP' # Beast Mode
+}
 
+if not playlist_info:
+    # Try fallback playlist for the mood
+    fallback_id = fallback_playlists.get(mood)
+    if fallback_id:
+        playlist_url = f"{SPOTIFY_API_BASE}/playlists/{fallback_id}"
+        playlist_response = requests.get(playlist_url, headers=headers)
+        if playlist_response.status_code == 200:
+            playlist_data = playlist_response.json()
+            playlist_info = {
+                'name': playlist_data['name'],
+                'description': 'Popular playlist for your mood'
+            }
+#=======================================================================================
 # Add this route to check Spotify connection status
 @app.route('/check_spotify_status')
 def check_spotify_status():
