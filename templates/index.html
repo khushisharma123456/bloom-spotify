@@ -1306,7 +1306,8 @@ window.fetchDefaultPlaylist = function() {
                 const playlistDisplay = document.getElementById('playlistDisplay');
                 playlistDisplay.innerHTML = '<p class="loading">Finding perfect playlist...</p>';
                 
-                const response = await fetch('/get_mood_playlist', {
+                const response = await fetch('https://bloom-spotify.onrender.com/get_mood_playlist', {
+
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
