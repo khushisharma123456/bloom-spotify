@@ -667,25 +667,7 @@ def get_mood_playlist():
         return jsonify({'error': f'Unexpected error: {str(e)}'}), 500
 #================================================================================================
 
-fallback_playlists = {
-    'happy': '37i9dQZF1DXdPec7aLTmlC',  # Happy Hits
-    'sad': '37i9dQZF1DX7qK8ma5wgG1',    # Sad Songs
-    'angry': '37i9dQZF1DX4SBhb3fqCJd',   # Are & Be
-    'energetic': '37i9dQZF1DX76Wlfdnj7AP' # Beast Mode
-}
 
-if not playlist_info:
-    # Try fallback playlist for the mood
-    fallback_id = fallback_playlists.get(mood)
-    if fallback_id:
-        playlist_url = f"{SPOTIFY_API_BASE}/playlists/{fallback_id}"
-        playlist_response = requests.get(playlist_url, headers=headers)
-        if playlist_response.status_code == 200:
-            playlist_data = playlist_response.json()
-            playlist_info = {
-                'name': playlist_data['name'],
-                'description': 'Popular playlist for your mood'
-            }
 #=======================================================================================
 # Add this route to check Spotify connection status
 @app.route('/check_spotify_status')
