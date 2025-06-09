@@ -1241,39 +1241,41 @@ document.querySelectorAll('.mood-option').forEach(option => {
 
 async function fetchPlaylist(mood, intensity) {
     const playlistDisplay = document.getElementById('playlistDisplay');
-    playlistDisplay.innerHTML = '<p class="loading">Finding perfect playlist for you...</p>';
-
+    
     try {
+        playlistDisplay.innerHTML = '<p class="loading">Finding perfect playlist for you...</p>';
+        
         const response = await fetch('/get_mood_playlist', {
             method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({ 
-                mood: mood,
-                intensity: intensity 
-            })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mood, intensity })
         });
-
-        const data = await response.json();
         
         if (!response.ok) {
-            throw new Error(data.error || 'Failed to fetch playlist');
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to fetch playlist');
         }
-
+        
+        const data = await response.json();
         displayPlaylist(data);
+        
     } catch (error) {
         console.error('Playlist fetch error:', error);
         playlistDisplay.innerHTML = `
             <div class="error">
-                <p>⚠️ Failed to load playlist: ${error.message}</p>
-                <p>We'll load a default playlist instead.</p>
-                <button onclick="fetchDefaultPlaylist()" class="retry-btn">
-                    <i class="fas fa-sync-alt"></i> Try Default Playlist
-                </button>
+                <p>⚠️ ${error.message}</p>
+                ${error.message.includes('connected') ? 
+                    '<button id="connect-spotify" class="spotify-login-btn">Connect Spotify</button>' : 
+                    '<button onclick="fetchDefaultPlaylist()" class="retry-btn">Try Default Playlist</button>'
+                }
             </div>
         `;
+        
+        if (error.message.includes('connected')) {
+            document.getElementById('connect-spotify').addEventListener('click', () => {
+                document.getElementById('spotify-login').click();
+            });
+        }
     }
 }
 
@@ -1333,29 +1335,35 @@ window.fetchDefaultPlaylist = function() {
 
     // Spotify login button handler
     document.getElementById('spotify-login').addEventListener('click', function(e) {
-        e.preventDefault();
-        console.log('Spotify login clicked');
+    e.preventDefault();
+    
+    // Store current mood and intensity
+    const selectedMood = document.querySelector('.mood-option.selected')?.dataset.mood || 'happy';
+    const intensity = document.querySelectorAll('.star.active').length || 3;
+    sessionStorage.setItem('pendingMood', selectedMood);
+    sessionStorage.setItem('pendingIntensity', intensity);
+    
+    // Open login window
+    window.open('/spotify_login', '_blank', 'width=500,height=700');
+});
+
+// Add this to check for pending mood after connection
+function checkSpotifyStatus() {
+    // ... existing code ...
+    
+    if (data.connected) {
+        updateSpotifyUI(data.display_name);
         
-        // Open Spotify login in a new tab
-        const spotifyWindow = window.open('/spotify_login', '_blank', 'width=500,height=700');
-        
-        // Check for successful login every second
-        const checkLogin = setInterval(async () => {
-            try {
-                const response = await fetch('/check_spotify_status');
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.connected) {
-                        clearInterval(checkLogin);
-                        if (spotifyWindow) spotifyWindow.close();
-                        updateSpotifyUI(data.display_name);
-                    }
-                }
-            } catch (error) {
-                console.error('Error checking login status:', error);
-            }
-        }, 1000);
-    });
+        // Check for pending mood selection
+        const pendingMood = sessionStorage.getItem('pendingMood');
+        const pendingIntensity = sessionStorage.getItem('pendingIntensity');
+        if (pendingMood && pendingIntensity) {
+            fetchPlaylist(pendingMood, pendingIntensity);
+            sessionStorage.removeItem('pendingMood');
+            sessionStorage.removeItem('pendingIntensity');
+        }
+    }
+}
 
     // Update Spotify UI when connected
     function updateSpotifyUI(displayName) {
