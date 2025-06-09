@@ -398,11 +398,17 @@ def mood():
     return render_template('mood.html', user_name=session['user_name'])
 
 # Add this function to check Spotify token status
+from datetime import datetime, timedelta, timezone
+
 def is_spotify_token_valid():
     if 'spotify_token_expiry' not in session or 'spotify_access_token' not in session:
         return False
     try:
-        return datetime.now() < session['spotify_token_expiry']
+        # Make both datetimes timezone-aware
+        expiry_time = session['spotify_token_expiry']
+        if expiry_time.tzinfo is None:
+            expiry_time = expiry_time.replace(tzinfo=timezone.utc)
+        return datetime.now(timezone.utc) < expiry_time
     except Exception as e:
         print(f"Error validating token: {str(e)}")
         return False
@@ -596,6 +602,16 @@ def get_mood_playlist():
         }
 
         # First try to get playlist details
+         playlist_info = mood_playlists.get(mood, {}).get(intensity)
+        if not playlist_info:
+            return jsonify({'error': 'No playlist found for this mood/intensity'}), 404
+
+        headers = {
+            'Authorization': f"Bearer {session['spotify_access_token']}",
+            'Content-Type': 'application/json'
+        }
+
+        # First try to get playlist details
         try:
             playlist_url = f"{SPOTIFY_API_BASE}/playlists/{playlist_info['id']}"
             playlist_response = requests.get(playlist_url, headers=headers)
@@ -603,14 +619,20 @@ def get_mood_playlist():
             playlist_data = playlist_response.json()
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 404:
-                # If playlist not found, try the fallback playlist
+                # If playlist not found, try a different fallback playlist
                 fallback_id = '37i9dQZF1DXcBWIGoYBM5M'  # Today's Top Hits as fallback
-                playlist_url = f"{SPOTIFY_API_BASE}/playlists/{fallback_id}"
-                playlist_response = requests.get(playlist_url, headers=headers)
-                playlist_response.raise_for_status()
-                playlist_data = playlist_response.json()
-                playlist_info['name'] = playlist_data['name']
-                playlist_info['description'] = "Popular playlist (original not available in your region)"
+                try:
+                    playlist_url = f"{SPOTIFY_API_BASE}/playlists/{fallback_id}"
+                    playlist_response = requests.get(playlist_url, headers=headers)
+                    playlist_response.raise_for_status()
+                    playlist_data = playlist_response.json()
+                    playlist_info['name'] = playlist_data['name']
+                    playlist_info['description'] = "Popular playlist (original not available in your region)"
+                except requests.exceptions.HTTPError as e2:
+                    return jsonify({
+                        'error': 'Could not load any playlists',
+                        'details': str(e2)
+                    }), 404
             else:
                 raise
 
